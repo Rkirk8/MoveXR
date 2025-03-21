@@ -5,45 +5,52 @@ const engine = new BABYLON.Engine(canvas, true);
 const createScene = async function () {
   const scene = new BABYLON.Scene(engine);
 
-  /*CAMERA
-  -----------------------------------------------------------------------------------------------------------------*/
-  // add a camera to the scene
-  const camera = new BABYLON.ArcRotateCamera("camera", -Math.Pi / 2, Math.Pi / 2, 2, new BABYLON.Vector3(0, 0, 0), scene);
+  /* CAMERA 
+  -------------------------------------------------*/
+  // Add a camera to the scene
+  const camera = new BABYLON.ArcRotateCamera(
+    "camera",
+    -Math.PI / 2,
+    Math.PI / 2,
+    2,
+    new BABYLON.Vector3(0, 0, 0),
+    scene
+  );
   camera.attachControl(canvas, true);
-  
-/* ENABLE AR
-  -----------------------------------------------------------------------------------------------------------------*/
-  // start webXR session
-  const xr = await scene.createDefultXRExperienceAsync({
+
+  /* ENABLE AR 
+  -------------------------------------------------*/
+  // Start WebXR session
+  const xr = await scene.createDefaultXRExperienceAsync({
     uiOptions: {
       sessionMode: "immersive-ar",
-      referenceSpaceType: "local"
+      referenceSpaceType: "local",
     },
-    optionalFeatures: true
+    optionalFeatures: true,
   });
 
-  /*LIGHTS
-  -----------------------------------------------------------------------------------------------------------------*/
-  const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0), scene);
+  /* LIGHTS
+  ------------------------------------------------- */
+  // Add a light to the scene
+  const light = new BABYLON.HemisphericLight(
+    "light",
+    new BABYLON.Vector3(1, 1, 0),
+    scene
+  );
   light.intensity = 0.7;
 
-  /*SKYBOX
-  -----------------------------------------------------------------------------------------------------------------*/
-  // If there is time add a skybox option
+  /* SKYBOX 
+  -------------------------------------------------*/
+  // If there is time, add a skybox option
 
-  /*MESHES TO DODGE
-  -----------------------------------------------------------------------------------------------------------------*/
-  
-  //simple box for a test
+  /* MESHES TO DODGE 
+  -------------------------------------------------*/
+  // Simple box for testing
   const box = BABYLON.MeshBuilder.CreateBox("box", { size: 1 }, scene);
-  const boxMat = new BABYLON.StandardMaterial("boxMat");
-  
-  
-  /*ANIMATIONS
-  -----------------------------------------------------------------------------------------------------------------*/
+  const boxMat = new BABYLON.StandardMaterial("boxMat", scene);
+  box.material = boxMat;
 
-/* INTERACTION
-  -----------------------------------------------------------------------------------------------------------------*/
+  /* INTERACTION */
   return scene;
 };
 
@@ -53,6 +60,6 @@ createScene().then((sceneToRender) => {
 });
 
 // Add an event listener that adapts to the user resizing the screen
-window.addEventListener("resize", function() {
+window.addEventListener("resize", function () {
   engine.resize();
 });
