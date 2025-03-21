@@ -45,10 +45,12 @@ const createScene = async function () {
 
   /* MESHES TO DODGE 
   -------------------------------------------------*/
-  // Simple box for testing
-  const box = BABYLON.MeshBuilder.CreateBox("box", { size: 1 }, scene);
+  // first box
+  const box = BABYLON.MeshBuilder.CreateBox("box", { with: 0.5, height: 1 , depth: 1 }, scene);
   const boxMat = new BABYLON.StandardMaterial("boxMat", scene);
   box.material = boxMat;
+  //find floor
+  box.position.y = 0.5;
 
   /* INTERACTION */
   return scene;
