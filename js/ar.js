@@ -46,7 +46,7 @@ const createScene = async function () {
   /* MESHES TO DODGE 
   -------------------------------------------------*/
   // first box
-  const box = BABYLON.MeshBuilder.CreateBox("box", { with: 0.5, height: 1 , depth: 1 }, scene);
+  const box = BABYLON.MeshBuilder.CreateBox("box", { with: 0.25, height: 1 , depth: 1 }, scene);
   const boxMat = new BABYLON.StandardMaterial("boxMat", scene);
   box.material = boxMat;
   //find floor
