@@ -53,6 +53,7 @@ const createScene = async function () {
   box.scaling = new BABYLON.Vector3(1, .25, 1);
   //find floor
   box.position.y = 0;
+  box.position.x = 1;
 
   /* INTERACTION */
   return scene;
