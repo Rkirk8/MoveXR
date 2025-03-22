@@ -46,39 +46,40 @@ const createScene = async function () {
   /* MESHES TO DODGE 
   -------------------------------------------------*/
   /* CREATE MULTIPLE BOXES */
-const boxes = [];
-const numBoxes = 5; // Change this to add more boxes
+  const boxes = [];
+  const numBoxes = 5;
 
-for (let i = 0; i < numBoxes; i++) {
-  const box = BABYLON.MeshBuilder.CreateBox(`box${i}`, { size: 1 }, scene);
-  box.position.set(Math.random() * 4 - 2, 0, Math.random() * -5 - 2); // Random x, start behind player
-  const boxMat = new BABYLON.StandardMaterial(`boxMat${i}`, scene);
-  boxMat.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random()); // Random color
-  box.material = boxMat;
-  boxes.push(box);
-}
+  for (let i = 0; i < numBoxes; i++) {
+    const box = BABYLON.MeshBuilder.CreateBox(`box${i}`, { size: 1 }, scene);
+    box.position.set(Math.random() * 4 - 2, 0.5, Math.random() * -10 - 2); // Random x, farther start z
+    const boxMat = new BABYLON.StandardMaterial(`boxMat${i}`, scene);
+    boxMat.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random()); 
+    box.material = boxMat;
+    boxes.push(box);
+  }
 
   /* MOVE BOXES FORWARD & LOOP */
   //move @ 30fps
-  const moveBoxes = new BABYLON.Animation("dodgeAnimation", "position.x", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE)
-  //array for key frames
+  const moveBoxes = new BABYLON.Animation(
+    `moveBox${i}`,
+    "position.z",
+    30,
+    BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+    BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+  );
+
   const dodgeKeys = [];
-  dodgeKeys.push({
-    frame: 0,
-    value: 0
-  });
-  dodgeKeys.push({
-    frame: 150,
-    value: 5
-  });
-  dodgeKeys.push({
-    frame: 300,
-    value: 0
-  });
+  dodgeKeys.push({ frame: 0, value: box.position.z });
+  dodgeKeys.push({ frame: 120, value: 2 }); // Moves toward the user
   moveBoxes.setKeys(dodgeKeys);
-  boxes.forEach(box => {
-    box.animations.push(moveBoxes);
-  })
+
+  box.animations.push(moveBoxes);
+  scene.beginAnimation(box, 0, 120, true);
+
+
+/* CONTROLS
+  -------------------------------------------------*/
+
   /* INTERACTION */
   return scene;
 };
