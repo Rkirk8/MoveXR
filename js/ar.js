@@ -26,7 +26,7 @@ const createScene = async function () {
       sessionMode: "immersive-ar",
       referenceSpaceType: "local",
     },
-    optionalFeatures: true,
+    optionalFeatures: ["local-floor", "bounded-floor"]
   });
 
   /* LIGHTS
@@ -45,16 +45,40 @@ const createScene = async function () {
 
   /* MESHES TO DODGE 
   -------------------------------------------------*/
-  // first box
-  const box = BABYLON.MeshBuilder.CreateBox("box", scene);
-  const boxMat = new BABYLON.StandardMaterial("boxMat", scene);
-  box.material = boxMat;
-  //box size 
-  box.scaling = new BABYLON.Vector3(1, .25, 1);
-  //find floor
-  box.position.y = 0;
-  box.position.x = 1;
+  /* CREATE MULTIPLE BOXES */
+const boxes = [];
+const numBoxes = 5; // Change this to add more boxes
 
+for (let i = 0; i < numBoxes; i++) {
+  const box = BABYLON.MeshBuilder.CreateBox(`box${i}`, { size: 1 }, scene);
+  box.position.set(Math.random() * 4 - 2, 0, Math.random() * -5 - 2); // Random x, start behind player
+  const boxMat = new BABYLON.StandardMaterial(`boxMat${i}`, scene);
+  boxMat.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random()); // Random color
+  box.material = boxMat;
+  boxes.push(box);
+}
+
+  /* MOVE BOXES FORWARD & LOOP */
+  //move @ 30fps
+  const moveBoxes = new BABYLON.Animation("dodgeAnimation", "position.x", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE)
+  //array for key frames
+  const dodgeKeys = [];
+  dodgeKeys.push({
+    frame: 0,
+    value: 0
+  });
+  dodgeKeys.push({
+    frame: 150,
+    value: 5
+  });
+  dodgeKeys.push({
+    frame: 300,
+    value: 0
+  });
+  moveBoxes.setKeys(dodgeKeys);
+  boxes.forEach(box => {
+    box.animations.push(moveBoxes);
+  })
   /* INTERACTION */
   return scene;
 };
