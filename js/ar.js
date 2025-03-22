@@ -12,8 +12,8 @@ const createScene = async function () {
     "camera",
     -Math.PI / 2,
     Math.PI / 2,
-    2,
-    new BABYLON.Vector3(0, 0, 0),
+    5,
+    new BABYLON.Vector3(0, 1, 0),
     scene
   );
   camera.attachControl(canvas, true);
@@ -24,9 +24,9 @@ const createScene = async function () {
   const xr = await scene.createDefaultXRExperienceAsync({
     uiOptions: {
       sessionMode: "immersive-ar",
-      referenceSpaceType: "local",
+      referenceSpaceType: "local-floor",
     },
-    optionalFeatures: ["local-floor", "bounded-floor"]
+    optionalFeatures: ["bounded-floor"]
   });
 
   /* LIGHTS
@@ -45,9 +45,16 @@ const createScene = async function () {
 
   /* MESHES TO DODGE
   -------------------------------------------------*/
+  // default box colour and matterial
+  const defaultBoxMaterial = new BABYLON.StandardMaterial("defBoxMat", scene);
+  defaultBoxMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0); // Red color
+
   //box 1
   const box1 = BABYLON.MeshBuilder.CreateBox("box1", { height: 1, width: 0.25, depth: 1 }, scene);
-  box1.position = new BABYLON.Vector3(1, 0.75, 2);
+  box1.position = new BABYLON.Vector3(0, 0.5, 2);
+  box1.material = defaultBoxMaterial;
+
+
 
   
   
@@ -56,23 +63,7 @@ const createScene = async function () {
 
   /* MOVE BOXES FORWARD & LOOP */
   //move @ 30fps
-  const moveBoxes = new BABYLON.Animation(
-    `moveBox${i}`,
-    "position.z",
-    30,
-    BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-    BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-  );
-
-  const dodgeKeys = [];
-  dodgeKeys.push({ frame: 0, value: box.position.z });
-  dodgeKeys.push({ frame: 120, value: 2 }); // Moves toward the user
-  moveBoxes.setKeys(dodgeKeys);
-
-  box.animations.push(moveBoxes);
-  scene.beginAnimation(box, 0, 120, true);
-
-
+  
 /* CONTROLS
   -------------------------------------------------*/
 
