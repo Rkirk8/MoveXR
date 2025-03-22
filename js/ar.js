@@ -12,7 +12,7 @@ const createScene = async function () {
     "camera",
     -Math.PI / 2,
     Math.PI / 2,
-    5,
+    100,
     new BABYLON.Vector3(0, 1, 0),
     scene
   );
