@@ -12,7 +12,7 @@ const createScene = async function () {
     "camera",
     -Math.PI / 2,
     Math.PI / 2,
-    100,
+    10,
     new BABYLON.Vector3(0, 1, 0),
     scene
   );
@@ -49,9 +49,11 @@ const createScene = async function () {
   const defaultBoxMaterial = new BABYLON.StandardMaterial("defBoxMat", scene);
   defaultBoxMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0); // Red color
 
-  //box 1
-  const box1 = BABYLON.MeshBuilder.CreateBox("box1", { height: 1, width: 0.25, depth: 1 }, scene);
-  box1.position = new BABYLON.Vector3(0, 0.5, 2);
+
+
+  //box 1 (duck)
+  const box1 = BABYLON.MeshBuilder.CreateBox("box1", { height: .5, width: 2, depth: 1 }, scene);
+  box1.position = new BABYLON.Vector3(0, 1, 2);
   box1.material = defaultBoxMaterial;
   //box 2
   const box2 = BABYLON.MeshBuilder.CreateBox("box2", { height: 1, width: 0.25, depth: 1 }, scene);
