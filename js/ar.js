@@ -43,20 +43,16 @@ const createScene = async function () {
   -------------------------------------------------*/
   // If there is time, add a skybox option
 
-  /* MESHES TO DODGE 
+  /* MESHES TO DODGE
   -------------------------------------------------*/
-  /* CREATE MULTIPLE BOXES */
-  const boxes = [];
-  const numBoxes = 5;
+  //box 1
+  const box1 = BABYLON.MeshBuilder.CreateBox("box1", { height: 1, width: 0.25, depth: 1 }, scene);
+  box1.position = new BABYLON.Vector3(1, 0.75, 2);
 
-  for (let i = 0; i < numBoxes; i++) {
-    const box = BABYLON.MeshBuilder.CreateBox(`box${i}`, { size: 1 }, scene);
-    box.position.set(Math.random() * 4 - 2, 0.5, Math.random() * -10 - 2); // Random x, farther start z
-    const boxMat = new BABYLON.StandardMaterial(`boxMat${i}`, scene);
-    boxMat.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random()); 
-    box.material = boxMat;
-    boxes.push(box);
-  }
+  
+  
+  
+  
 
   /* MOVE BOXES FORWARD & LOOP */
   //move @ 30fps
