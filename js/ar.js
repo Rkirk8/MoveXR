@@ -52,16 +52,16 @@ const createScene = async function () {
   // x right/left, y height, z depth
   //box 1 (duck)
   const box1 = BABYLON.MeshBuilder.CreateBox("box1", { height: .5, width: 2, depth: 1 }, scene);
-  box1.position = new BABYLON.Vector3(0.2, 1.7, 2);
+  box1.position = new BABYLON.Vector3(0.2, 1.8, 2);
   box1.material = defaultBoxMaterial;
   //box 2 (step left)
   const box2 = BABYLON.MeshBuilder.CreateBox("box2", { height: 3, width: 1.5, depth: 1 }, scene);
-  box2.position = new BABYLON.Vector3(1, 0.5, 4.5);
+  box2.position = new BABYLON.Vector3(1, 1.5, 4.5);
   box2.material = defaultBoxMaterial;
 
   //box 3 (step right)
   const box3 = BABYLON.MeshBuilder.CreateBox("box3", { height: 3, width:1.5, depth: 1 }, scene);
-  box3.position = new BABYLON.Vector3(-1, 1, 7);
+  box3.position = new BABYLON.Vector3(-1, 1.5, 7);
   box3.material = defaultBoxMaterial;
 
   //box 4 (jump)
