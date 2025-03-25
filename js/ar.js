@@ -69,8 +69,16 @@ const createScene = async function () {
   box4.position = new BABYLON.Vector3(0, .123, 9.5);
   box4.material = defaultBoxMaterial;
 
-  /* MOVE BOXES FORWARD & LOOP */
-  //move @ 30fps
+/* ANIMATIONS
+  -------------------------------------------------*/
+  // group all dodge meshes 
+  const dodgeGroup = new BABYLON.Mesh("dodgeGroup", scene);
+  dodgeGroup.addChild(box1);
+  dodgeGroup.addChild(box2);
+  dodgeGroup.addChild(box3);
+  dodgeGroup.addChild(box4);
+
+  // animate the dodge group
   
 /* CONTROLS
   -------------------------------------------------*/
