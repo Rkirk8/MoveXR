@@ -56,18 +56,18 @@ const createScene = async function () {
   box1.position = new BABYLON.Vector3(0, 1.7, 2);
   box1.material = defaultBoxMaterial;
   //box 2 (step left)
-  const box2 = BABYLON.MeshBuilder.CreateBox("box2", { height: 1.5, width: 1, depth: 1 }, scene);
+  const box2 = BABYLON.MeshBuilder.CreateBox("box2", { height: 3, width: 1.2, depth: 1 }, scene);
   box2.position = new BABYLON.Vector3(1, 0.5, 4);
   box2.material = defaultBoxMaterial;
 
   //box 3 (step right)
-  const box3 = BABYLON.MeshBuilder.CreateBox("box3", { height: 1.5, width:-1, depth: 1 }, scene);
+  const box3 = BABYLON.MeshBuilder.CreateBox("box3", { height: 3, width:1.2, depth: 1 }, scene);
   box3.position = new BABYLON.Vector3(-1, 0.5, 6);
   box3.material = defaultBoxMaterial;
 
   //box 4 (jump)
-  const box4 = BABYLON.MeshBuilder.CreateBox("box4", { height: .5, width: 0.25, depth: 1 }, scene);  
-  box4.position = new BABYLON.Vector3(0, -0.5, 8);
+  const box4 = BABYLON.MeshBuilder.CreateBox("box4", { height: 1, width: 0.25, depth: .5 }, scene);  
+  box4.position = new BABYLON.Vector3(0, 0.5, 8);
   box4.material = defaultBoxMaterial;
 
   /* MOVE BOXES FORWARD & LOOP */
