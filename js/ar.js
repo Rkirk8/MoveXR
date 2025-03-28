@@ -2,7 +2,7 @@ const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
 
 // Create the scene
-const createScene = async function () {
+const createScene = async function (obstacle) {
   const scene = new BABYLON.Scene(engine);
 
   /* CAMERA 
