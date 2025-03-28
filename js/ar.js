@@ -1,10 +1,7 @@
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true, );
 
-/**
- * Creates the scene with camera, AR experience, lights, and obstacles.
- * @returns {BABYLON.Scene} - The created scene.
- */
+
 const createScene = async function () {
   const scene = new BABYLON.Scene(engine);
   scene.clearColor = new BABYLON.Color3(0.8, 0.9, 1);
