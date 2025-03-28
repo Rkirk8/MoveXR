@@ -1,19 +1,10 @@
 const canvas = document.getElementById("renderCanvas");
-const engine = new BABYLON.Engine(canvas, true);
+const engine = new BABYLON.Engine(canvas, true, );
 
-// Game Configuration
-const GameConfig = {
-  difficulty: {
-    easy: { speed: 0.5, obstacleFrequency: 1, maxObstacles: 3 },
-    medium: { speed: 1, obstacleFrequency: 2, maxObstacles: 5 },
-    hard: { speed: 2, obstacleFrequency: 3, maxObstacles: 7 }
-  },
-  currentDifficulty: 'easy',
-  score: 0,
-  lives: 3
-};
-
-// Create the scene
+/**
+ * Creates the scene with camera, AR experience, lights, and obstacles.
+ * @returns {BABYLON.Scene} - The created scene.
+ */
 const createScene = async function () {
   const scene = new BABYLON.Scene(engine);
   scene.clearColor = new BABYLON.Color3(0.8, 0.9, 1);
@@ -42,7 +33,8 @@ const createScene = async function () {
 
   /* LIGHTS
   ------------------------------------------------- */
-  const hemisphericLight = new BABYLON.HemisphericLight(
+  // Add a light to the scene
+  const light = new BABYLON.HemisphericLight(
     "light",
     new BABYLON.Vector3(1, 1, 0),
     scene
@@ -51,157 +43,81 @@ const createScene = async function () {
 
   /* ENVIRONMENT
   -------------------------------------------------*/
-  const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 10, height: 20}, scene);
-  const groundMaterial = new BABYLON.StandardMaterial("groundMat", scene);
-  groundMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.7, 0.5);
-  ground.material = groundMaterial;
+  // If there is time, add a skybox option
 
-  /* OBSTACLE GENERATION UTILITIES
+  
+
+  /* MESHES x right/left, y height, z depth
   -------------------------------------------------*/
-  // Obstacle Types
-  const obstacleTypes = [
-    { 
-      name: "duck", 
-      dimensions: { height: 0.5, width: 2, depth: 1 },
-      description: "Low obstacle to duck under"
-    },
-    { 
-      name: "jump", 
-      dimensions: { height: 0.25, width: 2, depth: 0.5 },
-      description: "Small obstacle to jump over"
-    },
-    { 
-      name: "stepLeft", 
-      dimensions: { height: 1.5, width: 1, depth: 1 },
-      description: "Obstacle to step left around"
-    },
-    { 
-      name: "stepRight", 
-      dimensions: { height: 1.5, width: 1, depth: 1 },
-      description: "Obstacle to step right around"
-    }
-  ];
 
-  // Material Colors
-  const materialColors = [
-    { name: "red", color: new BABYLON.Color3(1, 0, 0) },
-    { name: "blue", color: new BABYLON.Color3(0, 0, 1) },
-    { name: "green", color: new BABYLON.Color3(0, 1, 0) },
-    { name: "purple", color: new BABYLON.Color3(0.5, 0, 0.5) }
-  ];
+  // Materials
+  const redMat = new BABYLON.StandardMaterial("redMat", scene);
+  redMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
 
-  // Create obstacle material
-  const createObstacleMaterial = (scene, color) => {
-    const material = new BABYLON.StandardMaterial(`${color.name}Mat`, scene);
-    material.diffuseColor = color.color;
-    material.alpha = 0.7;
-    return material;
-  };
-
-  // Obstacle generation function
-  const generateObstacle = () => {
-    // Randomly select obstacle type
-    const obstacleType = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
-    
-    // Randomly select material color
-    const materialColor = materialColors[Math.floor(Math.random() * materialColors.length)];
-    
-    // Random horizontal position
-    const xPosition = (Math.random() - 0.5) * 4; // Spread across -2 to 2 on x-axis
-    
-    // Create obstacle
-    const obstacle = BABYLON.MeshBuilder.CreateBox(
-      obstacleType.name + Date.now(), 
-      obstacleType.dimensions, 
-      scene
-    );
-    
-    // Position obstacle
-    obstacle.position = new BABYLON.Vector3(
-      xPosition, 
-      obstacleType.dimensions.height / 2, 
-      20 // Start far back
-    );
-    
-    // Apply material
-    const obstacleMaterial = createObstacleMaterial(scene, materialColor);
-    obstacle.material = obstacleMaterial;
-    
+  //Mesh Object
+  const createObstacle = (name, dimensions, position, material) => {
+    const obstacle = BABYLON.MeshBuilder.CreateBox(name, dimensions, scene);
+    obstacle.position = position; //x right/left, y height, z depth
+    obstacle.material = material;
+    obstacle.checkCollisions = true;
     return obstacle;
-  };
+  }
 
-  // Obstacle management
-  const activeObstacles = [];
+  const obstacles = [
+  //------------------------------------------------------------ x right = '+' / left = '-', y height, z depth
+    createObstacle("duck1", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.2, 1.8, 2), redMat),
+    createObstacle("stepLeft1", { height: 3, width: 2, depth: 1 }, new BABYLON.Vector3(1.45, 1.5, 4.5), redMat),
+    createObstacle("stepRight1", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 7), redMat),
+    createObstacle("duck2", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.27, 1.8, 9), redMat),
+    createObstacle("stepRight2", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 14), redMat),
+    createObstacle("duck3", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.27, 1.8, 16), redMat),
+    createObstacle("stepLeft2", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 11.5), redMat),
+    createObstacle("duck3", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.27, 1.8, 16), redMat),
+    createObstacle("stepLeft3", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 18.5), redMat),
+    createObstacle("stepRight3", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 21), redMat)
+  ];
 
-  // Obstacle spawning function
-  const spawnObstacles = () => {
-    const maxObstacles = GameConfig.difficulty[GameConfig.currentDifficulty].maxObstacles;
-    
-    // Remove off-screen obstacles
-    for (let i = activeObstacles.length - 1; i >= 0; i--) {
-      if (activeObstacles[i].position.z < -5) {
-        activeObstacles[i].dispose();
-        activeObstacles.splice(i, 1);
-      }
-    }
-
-    // Spawn new obstacles if below max
-    while (activeObstacles.length < maxObstacles) {
-      const newObstacle = generateObstacle();
-      activeObstacles.push(newObstacle);
-    }
-  };
-
-  // Animation for moving obstacles
-  const animateObstacles = () => {
-    activeObstacles.forEach((obstacle) => {
-      // Move obstacle forward
-      obstacle.position.z -= 0.1 * GameConfig.difficulty[GameConfig.currentDifficulty].speed;
-    });
-  };
-
-  // Spawn initial obstacles
-  spawnObstacles();
-
-  /* GAME LOOP
+/* ANIMATIONS
   -------------------------------------------------*/
-  scene.registerBeforeRender(() => {
-    // Spawn and animate obstacles
-    spawnObstacles();
-    animateObstacles();
+  const createZAnimation = (obstacle, index) => {
+    const zAnimation = new BABYLON.Animation(
+      `zMovement${index}`,
+      "position.z",
+      30,
+      BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+      BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+    );
 
-    // Proximity detection
-    activeObstacles.forEach(obstacle => {
-      if (Math.abs(obstacle.position.z) < 1) {
-        obstacle.material.emissiveColor = new BABYLON.Color3(1, 1, 0);
-      } else {
-        obstacle.material.emissiveColor = new BABYLON.Color3(0, 0, 0);
-      }
-    });
+    const zKeyFrames = [
+      { frame: 0, value: obstacle.position.z },
+      { frame: 100, value: obstacle.position.z - 20 },
+      { frame: 200, value: obstacle.position.z }
+    ];
+
+    zAnimation.setKeys(zKeyFrames);
+
+    scene.beginDirectAnimation(
+      obstacle,
+      [zAnimation],
+      0,
+      200,
+      true,
+      speed = 0.5,
+      obstacleFrequency = 1
+    );
+  };
+
+  obstacles.forEach((obstacle, index) => {
+    createZAnimation(obstacle, index);
   });
 
-  /* UI ELEMENTS 
-  -------------------------------------------------*/
-  const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
   
-  // Score Display
-  const scoreText = new BABYLON.GUI.TextBlock();
-  scoreText.text = `Score: ${GameConfig.score}`;
-  scoreText.color = "white";
-  scoreText.fontSize = 24;
-  scoreText.top = "-40%";
-  scoreText.left = "-40%";
-  advancedTexture.addControl(scoreText);
+/* HIT DETECTION: Detect if XR Headset Enters an Obstacle
+  -------------------------------------------------*/
+  
 
-  // Lives Display
-  const livesText = new BABYLON.GUI.TextBlock();
-  livesText.text = `Lives: ${GameConfig.lives}`;
-  livesText.color = "white";
-  livesText.fontSize = 24;
-  livesText.top = "-40%";
-  livesText.left = "40%";
-  advancedTexture.addControl(livesText);
-
+  /* INTERACTION */
   return scene;
 };
 
