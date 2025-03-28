@@ -1,13 +1,15 @@
 const canvas = document.getElementById("renderCanvas");
-const engine = new BABYLON.Engine(canvas, true, );
+const engine = new BABYLON.Engine(canvas, true);
 
-// Create the scene
+/**
+ * Creates the scene with camera, AR experience, lights, and obstacles.
+ * @returns {BABYLON.Scene} - The created scene.
+ */
 const createScene = async function () {
   const scene = new BABYLON.Scene(engine);
 
   /* CAMERA 
   -------------------------------------------------*/
-  // Add a camera to the scene
   const camera = new BABYLON.ArcRotateCamera(
     "camera",
     -Math.PI / 2,
@@ -20,7 +22,6 @@ const createScene = async function () {
 
   /* ENABLE AR 
   -------------------------------------------------*/
-  // Start WebXR session
   const xr = await scene.createDefaultXRExperienceAsync({
     uiOptions: {
       sessionMode: "immersive-ar",
@@ -31,7 +32,6 @@ const createScene = async function () {
 
   /* LIGHTS
   ------------------------------------------------- */
-  // Add a light to the scene
   const light = new BABYLON.HemisphericLight(
     "light",
     new BABYLON.Vector3(1, 1, 0),
@@ -41,9 +41,8 @@ const createScene = async function () {
 
   /* SKYBOX 
   -------------------------------------------------*/
-  // If there is time, add a skybox option
+  // Placeholder for skybox
 
-  
 
   /* MESHES x right/left, y height, z depth
   -------------------------------------------------*/
@@ -52,32 +51,75 @@ const createScene = async function () {
   const redMat = new BABYLON.StandardMaterial("redMat", scene);
   redMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
 
-  //Mesh Object
+  /**
+   * Creates an obstacle mesh.
+   * @param {string} name - The name of the obstacle.
+   * @param {object} dimensions - The dimensions of the obstacle.
+   * @param {BABYLON.Vector3} position - The position of the obstacle.
+   * @param {BABYLON.Material} material - The material of the obstacle.
+   * @returns {BABYLON.Mesh} - The created obstacle.
+   */
   const createObstacle = (name, dimensions, position, material) => {
     const obstacle = BABYLON.MeshBuilder.CreateBox(name, dimensions, scene);
-    obstacle.position = position; //x right/left, y height, z depth
+    obstacle.position = position; // x right/left, y height, z depth
     obstacle.material = material;
+    // Enable collision detection
     obstacle.checkCollisions = true;
     return obstacle;
-  }
+  };
 
-  const obstacles = [
-  //------------------------------------------------------------ x right = '+' / left = '-', y height, z depth
-    createObstacle("duck1", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.2, 1.8, 2), redMat),
-    createObstacle("stepLeft1", { height: 3, width: 2, depth: 1 }, new BABYLON.Vector3(1.45, 1.5, 4.5), redMat),
-    createObstacle("stepRight1", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 7), redMat),
-    createObstacle("duck2", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.27, 1.8, 9), redMat),
-    createObstacle("stepRight2", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 14), redMat),
-    createObstacle("duck3", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.27, 1.8, 16), redMat),
-    createObstacle("stepLeft2", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 11.5), redMat),
-    createObstacle("duck3", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.27, 1.8, 16), redMat),
-    createObstacle("stepLeft3", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 18.5), redMat),
-    createObstacle("stepRight3", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 21), redMat)
+  /* OBSTACLE GENERATION 
+  -------------------------------------------------*/
+  // Define obstacle types
+  const obstacleTypes = [
+    { name: "duck", height: 0.5, width: 3, depth: 1, xPositions: [0.2, 0.27] },
+    { name: "stepLeft", height: 3, width: 3, depth: 1, xPositions: [1, 1.45] },
+    { name: "stepRight", height: 3, width: 3, depth: 1, xPositions: [-1, -1.45] },
   ];
 
-/* ANIMATIONS
+  // Return a random obstacle from the array w/ Math.random() function.
+  const getRandomItem = (array) => {
+    return array[Math.floor(Math.random() * array.length)];
+  };
+
+  // Function to generate obstacles
+  const generateObstacles = () => {
+    const obstacles = []; // Array to store generated obstacles
+    let currentZPosition = 3; // First obstacle position
+    const zSpacing = 2.5; // Space consecutive obstacles
+
+    // Shuffle obstacle types and select the first three for initial obstacles
+    const firstThreeTypes = [...obstacleTypes].sort(() => Math.random() - 0.5);
+
+    firstThreeTypes.forEach((type, index) => {
+      const name = `${type.name}${index + 1}`; // Unique name for each obstacle
+      const xPosition = getRandomItem(type.xPositions); // Random X position from type
+
+      const obstacle = createObstacle(
+        name, 
+        { 
+          height: type.height, 
+          width: type.width, 
+          depth: type.depth 
+        }, 
+        new BABYLON.Vector3(xPosition, 1.5, currentZPosition), // Position vector for obstacle
+        redMat // Material for obstacle
+      );
+
+      obstacles.push(obstacle); // Add created obstacle to the array
+      currentZPosition += zSpacing; // Update Z position for the next obstacle
+    });
+
+    return obstacles; // Return the array of generated obstacles
+  };
+
+  // Generate obstacles and store them in an array
+  const obstacles = generateObstacles();
+
+  /* ANIMATIONS
   -------------------------------------------------*/
   const createZAnimation = (obstacle, index) => {
+    // Create an animation for the Z-axis
     const zAnimation = new BABYLON.Animation(
       `zMovement${index}`,
       "position.z",
@@ -86,14 +128,17 @@ const createScene = async function () {
       BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
+    // Define the keyframes
     const zKeyFrames = [
       { frame: 0, value: obstacle.position.z },
       { frame: 100, value: obstacle.position.z - 20 },
       { frame: 200, value: obstacle.position.z }
     ];
 
+    // Set the keyframes for the animation.
     zAnimation.setKeys(zKeyFrames);
 
+    // Start the animation on the obstacle. The animation will loop indefinitely.
     scene.beginDirectAnimation(
       obstacle,
       [zAnimation],
@@ -105,15 +150,14 @@ const createScene = async function () {
     );
   };
 
+  // Animate each obstacle
   obstacles.forEach((obstacle, index) => {
     createZAnimation(obstacle, index);
   });
 
-
-  
-/* HIT DETECTION: Detect if XR Headset Enters an Obstacle
+  /* HIT DETECTION: Detect if XR Headset Enters an Obstacle
   -------------------------------------------------*/
-  
+  // Placeholder for hit detection implementation
 
   /* INTERACTION */
   return scene;
@@ -128,3 +172,5 @@ createScene().then((sceneToRender) => {
 window.addEventListener("resize", function () {
   engine.resize();
 });
+
+
