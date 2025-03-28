@@ -68,26 +68,29 @@ const createScene = async function () {
     createObstacle("jump", { height: 0.25, width: 2, depth: 0.5 }, new BABYLON.Vector3(0, 0.123, 9.5), redMat)
   ];
 
-/* ANIMATIONS
+/* ANIMATIONS  x right/left, y height, z depth
   -------------------------------------------------*/
-  obstacles.forEach((obstacle, index) => {
-    const animation = new BABYLON.Animation(
-      `sequentialAnimation${index}`,
+  const createZAnimation = (obstacle, index) => {
+    const zAnimation = new BABYLON.Animation(
+      `zMovement${index}`,
       "position.z",
       30,
       BABYLON.Animation.ANIMATIONTYPE_FLOAT,
       BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFrames = [
+    const zKeyFrames = [
       { frame: 0, value: obstacle.position.z },
-      { frame: 100, value: obstacle.position.z + index * 50 }, 
+      { frame: 100, value: obstacle.position.z - 10 }, 
       { frame: 200, value: obstacle.position.z }
     ];
 
-    animation.setKeys(keyFrames);
-    obstacle.animations.push(animation);
-    scene.beginAnimation(obstacle, 0, 200, true);
+    zAnimation.setKeys(zKeyFrames);
+    obstacle.animations.push(zAnimation);
+  };
+
+  obstacles.forEach((obstacle, index) => {
+    createZAnimation(obstacle, index);
   });
 
   
