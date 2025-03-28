@@ -1,7 +1,7 @@
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
 
-// Difficulties
+// Game Configuration
 const GameConfig = {
   difficulty: {
     easy: { speed: 0.5, obstacleFrequency: 1, maxObstacles: 3 },
@@ -13,8 +13,10 @@ const GameConfig = {
   lives: 3
 };
 
+// Create the scene
 const createScene = async function () {
   const scene = new BABYLON.Scene(engine);
+  scene.clearColor = new BABYLON.Color3(0.8, 0.9, 1);
 
   /* CAMERA 
   -------------------------------------------------*/
@@ -35,22 +37,24 @@ const createScene = async function () {
       sessionMode: "immersive-ar",
       referenceSpaceType: "local-floor",
     },
-    optionalFeatures: ["local-floor", "hand-tracking"]
+    optionalFeatures: ["bounded-floor", "hand-tracking"]
   });
 
   /* LIGHTS
   ------------------------------------------------- */
-  const light = new BABYLON.HemisphericLight(
+  const hemisphericLight = new BABYLON.HemisphericLight(
     "light",
     new BABYLON.Vector3(1, 1, 0),
     scene
   );
-  light.intensity = 0.7;
+  hemisphericLight.intensity = 0.7;
 
-  /* SKYBOX
+  /* ENVIRONMENT
   -------------------------------------------------*/
-  // Placeholder for skybox
-
+  const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 10, height: 20}, scene);
+  const groundMaterial = new BABYLON.StandardMaterial("groundMat", scene);
+  groundMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.7, 0.5);
+  ground.material = groundMaterial;
 
   /* OBSTACLE GENERATION UTILITIES
   -------------------------------------------------*/
@@ -58,15 +62,23 @@ const createScene = async function () {
   const obstacleTypes = [
     { 
       name: "duck", 
-      dimensions: { height: 0.5, width: 2, depth: 1 }
+      dimensions: { height: 0.5, width: 2, depth: 1 },
+      description: "Low obstacle to duck under"
+    },
+    { 
+      name: "jump", 
+      dimensions: { height: 0.25, width: 2, depth: 0.5 },
+      description: "Small obstacle to jump over"
     },
     { 
       name: "stepLeft", 
-      dimensions: { height: 1.5, width: 1, depth: 1 }
+      dimensions: { height: 1.5, width: 1, depth: 1 },
+      description: "Obstacle to step left around"
     },
     { 
       name: "stepRight", 
-      dimensions: { height: 1.5, width: 1, depth: 1 }
+      dimensions: { height: 1.5, width: 1, depth: 1 },
+      description: "Obstacle to step right around"
     }
   ];
 
@@ -85,6 +97,7 @@ const createScene = async function () {
     material.alpha = 0.7;
     return material;
   };
+
   // Obstacle generation function
   const generateObstacle = () => {
     // Randomly select obstacle type
@@ -150,23 +163,54 @@ const createScene = async function () {
   // Spawn initial obstacles
   spawnObstacles();
 
-
-  /* HIT DETECTION: Detect if XR Headset Enters an Obstacle
+  /* GAME LOOP
   -------------------------------------------------*/
-  // Placeholder for hit detection implementation
+  scene.registerBeforeRender(() => {
+    // Spawn and animate obstacles
+    spawnObstacles();
+    animateObstacles();
 
-  /* INTERACTION */
+    // Proximity detection
+    activeObstacles.forEach(obstacle => {
+      if (Math.abs(obstacle.position.z) < 1) {
+        obstacle.material.emissiveColor = new BABYLON.Color3(1, 1, 0);
+      } else {
+        obstacle.material.emissiveColor = new BABYLON.Color3(0, 0, 0);
+      }
+    });
+  });
+
+  /* UI ELEMENTS 
+  -------------------------------------------------*/
+  const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+  
+  // Score Display
+  const scoreText = new BABYLON.GUI.TextBlock();
+  scoreText.text = `Score: ${GameConfig.score}`;
+  scoreText.color = "white";
+  scoreText.fontSize = 24;
+  scoreText.top = "-40%";
+  scoreText.left = "-40%";
+  advancedTexture.addControl(scoreText);
+
+  // Lives Display
+  const livesText = new BABYLON.GUI.TextBlock();
+  livesText.text = `Lives: ${GameConfig.lives}`;
+  livesText.color = "white";
+  livesText.fontSize = 24;
+  livesText.top = "-40%";
+  livesText.left = "40%";
+  advancedTexture.addControl(livesText);
+
   return scene;
 };
 
-// Continually render the scene in an endless loop
+// Render loop
 createScene().then((sceneToRender) => {
   engine.runRenderLoop(() => sceneToRender.render());
 });
 
-// Add an event listener that adapts to the user resizing the screen
+// Responsive design
 window.addEventListener("resize", function () {
   engine.resize();
 });
-
-
