@@ -71,23 +71,25 @@ const createScene = async function () {
 /* ANIMATIONS
   -------------------------------------------------*/
   obstacles.forEach((obstacle, index) => {
-    const yAnimation = new BABYLON.Animation(
-      `obstacleAnimation${index}`, 
-      "position.y", 
-      30, 
-      BABYLON.Animation.ANIMATIONTYPE_FLOAT, 
+    const animation = new BABYLON.Animation(
+      `sequentialAnimation${index}`,
+      "position.z",
+      30,
+      BABYLON.Animation.ANIMATIONTYPE_FLOAT,
       BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
     );
 
-    const keyFrames = [];
-    keyFrames.push({ frame: 0, value: obstacle.position.y });
-    keyFrames.push({ frame: 50, value: obstacle.position.y + 0.2 });
-    keyFrames.push({ frame: 100, value: obstacle.position.y });
+    const keyFrames = [
+      { frame: 0, value: obstacle.position.z },
+      { frame: 100, value: obstacle.position.z + index * 50 }, 
+      { frame: 200, value: obstacle.position.z }
+    ];
 
-    yAnimation.setKeys(keyFrames);
-    obstacle.animations.push(yAnimation);
-    scene.beginAnimation(obstacle, 0, 100, true);
+    animation.setKeys(keyFrames);
+    obstacle.animations.push(animation);
+    scene.beginAnimation(obstacle, 0, 200, true);
   });
+
   
 /* HIT DETECTION: Detect if XR Headset Enters an Obstacle
   -------------------------------------------------*/
