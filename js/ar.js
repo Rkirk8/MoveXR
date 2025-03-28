@@ -1,10 +1,18 @@
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
 
-/**
- * Creates the scene with camera, AR experience, lights, and obstacles.
- * @returns {BABYLON.Scene} - The created scene.
- */
+// Difficulties
+const GameConfig = {
+  difficulty: {
+    easy: { speed: 0.5, obstacleFrequency: 1, maxObstacles: 3 },
+    medium: { speed: 1, obstacleFrequency: 2, maxObstacles: 5 },
+    hard: { speed: 2, obstacleFrequency: 3, maxObstacles: 7 }
+  },
+  currentDifficulty: 'easy',
+  score: 0,
+  lives: 3
+};
+
 const createScene = async function () {
   const scene = new BABYLON.Scene(engine);
 
@@ -27,7 +35,7 @@ const createScene = async function () {
       sessionMode: "immersive-ar",
       referenceSpaceType: "local-floor",
     },
-    optionalFeatures: ["bounded-floor", "hand-tracking"]
+    optionalFeatures: ["local-floor", "hand-tracking"]
   });
 
   /* LIGHTS
@@ -46,36 +54,29 @@ const createScene = async function () {
 
   /* MESHES x right/left, y height, z depth
   -------------------------------------------------*/
-
-  // Materials
   const redMat = new BABYLON.StandardMaterial("redMat", scene);
   redMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
 
-  /**
-   * Creates an obstacle mesh.
-   * @param {string} name - The name of the obstacle.
-   * @param {object} dimensions - The dimensions of the obstacle.
-   * @param {BABYLON.Vector3} position - The position of the obstacle.
-   * @param {BABYLON.Material} material - The material of the obstacle.
-   * @returns {BABYLON.Mesh} - The created obstacle.
-   */
-  const createObstacle = (name, dimensions, position, material) => {
-    const obstacle = BABYLON.MeshBuilder.CreateBox(name, dimensions, scene);
-    obstacle.position = position; // x right/left, y height, z depth
-    obstacle.material = material;
-    // Enable collision detection
-    obstacle.checkCollisions = true;
-    return obstacle;
-  };
-
-  /* OBSTACLE GENERATION 
+  /* OBSTACLES
   -------------------------------------------------*/
-  // Define obstacle types
   const obstacleTypes = [
-    { name: "duck", height: 0.5, width: 3, depth: 1, xPositions: [0.2, 0.27] },
-    { name: "stepLeft", height: 3, width: 3, depth: 1, xPositions: [1, 1.45] },
-    { name: "stepRight", height: 3, width: 3, depth: 1, xPositions: [-1, -1.45] },
+    {
+      name: "duck",
+      dimensions: { height: 0.5, width: 3, depth: 1 },
+      xPositions: [1.7, 0.27]
+    },
+    {
+      name: "stepLeft",
+      dimensions: { height: 3, width: 3, depth: 1 }, xPositions: [1, 1.45]
+    },
+    {
+      name: "stepRight",
+      dimensions: { height: 3, width: 3, depth: 1 }, xPositions: [-1, -1.45],
+    }
   ];
+
+  /* OBSTACLE MANAGEMENT 
+  -------------------------------------------------*/
 
   // Return a random obstacle from the array w/ Math.random() function.
   const getRandomItem = (array) => {
@@ -89,7 +90,7 @@ const createScene = async function () {
     const zSpacing = 2.5; // Space consecutive obstacles
 
     // Shuffle obstacle types and select the first three for initial obstacles
-    const firstThreeTypes = [...obstacleTypes].sort(() => Math.random() - 0.5);
+    const firstThreeTypes = [obstacleTypes].sort(() => Math.random() - 0.5);
 
     firstThreeTypes.forEach((type, index) => {
       const name = `${type.name}${index + 1}`; // Unique name for each obstacle
