@@ -62,10 +62,15 @@ const createScene = async function () {
   }
 
   const obstacles = [
-    createObstacle("duck", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.2, 1.8, 2), redMat),
-    createObstacle("stepLeft", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 4.5), redMat),
-    createObstacle("stepRight", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 7), redMat),
-    createObstacle("jump", { height: 0.25, width: 2, depth: 0.5 }, new BABYLON.Vector3(0, 0.123, 9.5), redMat)
+    createObstacle("duck1", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.2, 1.8, 2), redMat),
+    createObstacle("stepLeft1", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 4.5), redMat),
+    createObstacle("stepRight1", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 7), redMat),
+    createObstacle("duck2", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.27, 1.8, 9), redMat),
+    createObstacle("stepRight2", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 14), redMat),
+    createObstacle("stepLeft2", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 11.5), redMat),
+    createObstacle("duck3", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.27, 1.8, 16), redMat),
+    createObstacle("stepLeft3", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 18.5), redMat),
+    createObstacle("stepRight3", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 21), redMat)
   ];
 
 /* ANIMATIONS  x right/left, y height, z depth
