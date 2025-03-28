@@ -70,7 +70,7 @@ const createScene = async function () {
 
 /* ANIMATIONS
   -------------------------------------------------*/
-  dodgeObstacles.forEach((obstacle, index) => {
+  obstacles.forEach((obstacle, index) => {
     const yAnimation = new BABYLON.Animation(
       `obstacleAnimation${index}`, 
       "position.y", 
