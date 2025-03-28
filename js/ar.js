@@ -60,11 +60,11 @@ const createScene = async function () {
     return obstacle;
   }
 
-  const Obstacles = [
-    Obstacles("duck", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.2, 1.8, 2), redMat),
-    Obstacles("stepLeft", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 4.5), redMat),
-    Obstacles("stepRight", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 7), redMat),
-    Obstacles("jump", { height: 0.25, width: 2, depth: 0.5 }, new BABYLON.Vector3(0, 0.123, 9.5), redMat)
+  const obstacles = [
+    createObstacle("duck", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.2, 1.8, 2), redMat),
+    createObstacle("stepLeft", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 4.5), redMat),
+    createObstacle("stepRight", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 7), redMat),
+    createObstacle("jump", { height: 0.25, width: 2, depth: 0.5 }, new BABYLON.Vector3(0, 0.123, 9.5), redMat)
   ];
 
   // x right/left, y height, z depth
