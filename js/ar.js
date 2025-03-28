@@ -61,19 +61,20 @@ const createScene = async function () {
     return obstacle;
   }
 
-  const obstacles = [
+  const obstacles = [//                                                     x right/left, y height, z depth
     createObstacle("duck1", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.2, 1.8, 2), redMat),
-    createObstacle("stepLeft1", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 4.5), redMat),
+    createObstacle("stepLeft1", { height: 3, width: 2, depth: 1 }, new BABYLON.Vector3(1, 1.5, 4.5), redMat),
     createObstacle("stepRight1", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 7), redMat),
     createObstacle("duck2", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.27, 1.8, 9), redMat),
     createObstacle("stepRight2", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 14), redMat),
+    createObstacle("duck3", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.27, 1.8, 16), redMat),
     createObstacle("stepLeft2", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 11.5), redMat),
     createObstacle("duck3", { height: 0.5, width: 2, depth: 1 }, new BABYLON.Vector3(0.27, 1.8, 16), redMat),
     createObstacle("stepLeft3", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(1, 1.5, 18.5), redMat),
     createObstacle("stepRight3", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 21), redMat)
   ];
 
-/* ANIMATIONS  x right/left, y height, z depth
+/* ANIMATIONS
   -------------------------------------------------*/
   const createZAnimation = (obstacle, index) => {
     const zAnimation = new BABYLON.Animation(
