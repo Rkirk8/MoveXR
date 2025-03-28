@@ -1,8 +1,8 @@
 const canvas = document.getElementById("renderCanvas");
-const engine = new BABYLON.Engine(canvas, true);
+const engine = new BABYLON.Engine(canvas, true, );
 
 // Create the scene
-const createScene = async function (obstacle) {
+const createScene = async function () {
   const scene = new BABYLON.Scene(engine);
 
   /* CAMERA 
@@ -81,23 +81,26 @@ const createScene = async function (obstacle) {
 
     const zKeyFrames = [
       { frame: 0, value: obstacle.position.z },
-      { frame: 100, value: obstacle.position.z - 10 }, 
+      { frame: 100, value: obstacle.position.z - 10 },
       { frame: 200, value: obstacle.position.z }
     ];
 
     zAnimation.setKeys(zKeyFrames);
-    obstacle.animations.push(zAnimation);
+
+    scene.beginDirectAnimation(
+      obstacle,
+      [zAnimation],
+      0,
+      200,
+      true,
+      speed = 0.5,
+      obstacleFrequency = 1
+    );
   };
 
-  scene.beginDirectAnimation(
-    obstacle, 
-    [zAnimation], 
-    0, 
-    200, 
-    true, 
-    speed = 0.5,
-    obstacleFrequency = 1
-  );
+  obstacles.forEach((obstacle, index) => {
+    createZAnimation(obstacle, index);
+  });
 
 
   
