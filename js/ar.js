@@ -53,7 +53,7 @@ const createScene = async function () {
   redMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
 
   //Mesh Object
-  const createObstacles = (name, dimensions, position, material) => {
+  const createObstacle = (name, dimensions, position, material) => {
     const obstacle = BABYLON.MeshBuilder.CreateBox(name, dimensions, scene);
     obstacle.position = position; //x right/left, y height, z depth
     obstacle.material = material;
