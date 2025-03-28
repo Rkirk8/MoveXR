@@ -81,7 +81,7 @@ const createScene = async function () {
 
     const zKeyFrames = [
       { frame: 0, value: obstacle.position.z },
-      { frame: 100, value: obstacle.position.z - 10 },
+      { frame: 100, value: obstacle.position.z - 20 },
       { frame: 200, value: obstacle.position.z }
     ];
 
