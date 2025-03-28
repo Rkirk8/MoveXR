@@ -47,114 +47,109 @@ const createScene = async function () {
   );
   light.intensity = 0.7;
 
-  /* SKYBOX 
+  /* SKYBOX
   -------------------------------------------------*/
   // Placeholder for skybox
 
 
-  /* MESHES x right/left, y height, z depth
+  /* OBSTACLE GENERATION UTILITIES
   -------------------------------------------------*/
-  const redMat = new BABYLON.StandardMaterial("redMat", scene);
-  redMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
-
-  /* OBSTACLES
-  -------------------------------------------------*/
+  // Obstacle Types
   const obstacleTypes = [
-    {
-      name: "duck",
-      dimensions: { height: 0.5, width: 3, depth: 1 },
-      xPositions: [1.7, 0.27]
+    { 
+      name: "duck", 
+      dimensions: { height: 0.5, width: 2, depth: 1 }
     },
-    {
-      name: "stepLeft",
-      dimensions: { height: 3, width: 3, depth: 1 }, xPositions: [1, 1.45]
+    { 
+      name: "stepLeft", 
+      dimensions: { height: 1.5, width: 1, depth: 1 }
     },
-    {
-      name: "stepRight",
-      dimensions: { height: 3, width: 3, depth: 1 }, xPositions: [-1, -1.45],
+    { 
+      name: "stepRight", 
+      dimensions: { height: 1.5, width: 1, depth: 1 }
     }
   ];
 
-  /* OBSTACLE MANAGEMENT 
-  -------------------------------------------------*/
+  // Material Colors
+  const materialColors = [
+    { name: "red", color: new BABYLON.Color3(1, 0, 0) },
+    { name: "blue", color: new BABYLON.Color3(0, 0, 1) },
+    { name: "green", color: new BABYLON.Color3(0, 1, 0) },
+    { name: "purple", color: new BABYLON.Color3(0.5, 0, 0.5) }
+  ];
 
-  // Return a random obstacle from the array w/ Math.random() function.
-  const getRandomItem = (array) => {
-    return array[Math.floor(Math.random() * array.length)];
+  // Create obstacle material
+  const createObstacleMaterial = (scene, color) => {
+    const material = new BABYLON.StandardMaterial(`${color.name}Mat`, scene);
+    material.diffuseColor = color.color;
+    material.alpha = 0.7;
+    return material;
+  };
+  // Obstacle generation function
+  const generateObstacle = () => {
+    // Randomly select obstacle type
+    const obstacleType = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
+    
+    // Randomly select material color
+    const materialColor = materialColors[Math.floor(Math.random() * materialColors.length)];
+    
+    // Random horizontal position
+    const xPosition = (Math.random() - 0.5) * 4; // Spread across -2 to 2 on x-axis
+    
+    // Create obstacle
+    const obstacle = BABYLON.MeshBuilder.CreateBox(
+      obstacleType.name + Date.now(), 
+      obstacleType.dimensions, 
+      scene
+    );
+    
+    // Position obstacle
+    obstacle.position = new BABYLON.Vector3(
+      xPosition, 
+      obstacleType.dimensions.height / 2, 
+      20 // Start far back
+    );
+    
+    // Apply material
+    const obstacleMaterial = createObstacleMaterial(scene, materialColor);
+    obstacle.material = obstacleMaterial;
+    
+    return obstacle;
   };
 
-  // Function to generate obstacles
-  const generateObstacles = () => {
-    const obstacles = []; // Array to store generated obstacles
-    let currentZPosition = 3; // First obstacle position
-    const zSpacing = 2.5; // Space consecutive obstacles
+  // Obstacle management
+  const activeObstacles = [];
 
-    // Shuffle obstacle types and select the first three for initial obstacles
-    const firstThreeTypes = [obstacleTypes].sort(() => Math.random() - 0.5);
+  // Obstacle spawning function
+  const spawnObstacles = () => {
+    const maxObstacles = GameConfig.difficulty[GameConfig.currentDifficulty].maxObstacles;
+    
+    // Remove off-screen obstacles
+    for (let i = activeObstacles.length - 1; i >= 0; i--) {
+      if (activeObstacles[i].position.z < -5) {
+        activeObstacles[i].dispose();
+        activeObstacles.splice(i, 1);
+      }
+    }
 
-    firstThreeTypes.forEach((type, index) => {
-      const name = `${type.name}${index + 1}`; // Unique name for each obstacle
-      const xPosition = getRandomItem(type.xPositions); // Random X position from type
+    // Spawn new obstacles if below max
+    while (activeObstacles.length < maxObstacles) {
+      const newObstacle = generateObstacle();
+      activeObstacles.push(newObstacle);
+    }
+  };
 
-      const obstacle = createObstacle(
-        name, 
-        { 
-          height: type.height, 
-          width: type.width, 
-          depth: type.depth 
-        }, 
-        new BABYLON.Vector3(xPosition, 1.5, currentZPosition), // Position vector for obstacle
-        redMat // Material for obstacle
-      );
-
-      obstacles.push(obstacle); // Add created obstacle to the array
-      currentZPosition += zSpacing; // Update Z position for the next obstacle
+  // Animation for moving obstacles
+  const animateObstacles = () => {
+    activeObstacles.forEach((obstacle) => {
+      // Move obstacle forward
+      obstacle.position.z -= 0.1 * GameConfig.difficulty[GameConfig.currentDifficulty].speed;
     });
-
-    return obstacles; // Return the array of generated obstacles
   };
 
-  // Generate obstacles and store them in an array
-  const obstacles = generateObstacles();
+  // Spawn initial obstacles
+  spawnObstacles();
 
-  /* ANIMATIONS
-  -------------------------------------------------*/
-  const createZAnimation = (obstacle, index) => {
-    // Create an animation for the Z-axis
-    const zAnimation = new BABYLON.Animation(
-      `zMovement${index}`,
-      "position.z",
-      30,
-      BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-      BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-    );
-
-    // Define the keyframes
-    const zKeyFrames = [
-      { frame: 0, value: obstacle.position.z },
-      { frame: 100, value: obstacle.position.z - 20 },
-      { frame: 200, value: obstacle.position.z }
-    ];
-
-    // Set the keyframes for the animation.
-    zAnimation.setKeys(zKeyFrames);
-
-    // Start the animation on the obstacle. The animation will loop indefinitely.
-    scene.beginDirectAnimation(
-      obstacle,
-      [zAnimation],
-      0,
-      200,
-      true,
-      speed = 0.5,
-      obstacleFrequency = 1
-    );
-  };
-
-  // Animate each obstacle
-  obstacles.forEach((obstacle, index) => {
-    createZAnimation(obstacle, index);
-  });
 
   /* HIT DETECTION: Detect if XR Headset Enters an Obstacle
   -------------------------------------------------*/
