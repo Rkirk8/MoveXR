@@ -34,9 +34,9 @@ const createScene = async function () {
   const light = new BABYLON.HemisphericLight(
     "light",
     new BABYLON.Vector3(1, 1, 0),
-    scene
+    scene,
+    intensity = 0.7
   );
-  hemisphericLight.intensity = 0.7;
 
   /* ENVIRONMENT
   -------------------------------------------------*/
