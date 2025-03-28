@@ -57,6 +57,7 @@ const createScene = async function () {
     const obstacle = BABYLON.MeshBuilder.CreateBox(name, dimensions, scene);
     obstacle.position = position; //x right/left, y height, z depth
     obstacle.material = material;
+    obstacle.checkCollisions = true;
     return obstacle;
   }
 
@@ -67,31 +68,30 @@ const createScene = async function () {
     createObstacle("jump", { height: 0.25, width: 2, depth: 0.5 }, new BABYLON.Vector3(0, 0.123, 9.5), redMat)
   ];
 
-  // x right/left, y height, z depth
-  // //box 1 (duck)
-  // const box1 = BABYLON.MeshBuilder.CreateBox("box1", { height: .5, width: 2, depth: 1 }, scene);
-  // box1.position = new BABYLON.Vector3(0.2, 1.8, 2);
-  // box1.material = defaultBoxMaterial;
-  // //box 2 (step left)
-  // const box2 = BABYLON.MeshBuilder.CreateBox("box2", { height: 3, width: 1.5, depth: 1 }, scene);
-  // box2.position = new BABYLON.Vector3(1, 1.5, 4.5);
-  // box2.material = defaultBoxMaterial;
-
-  // //box 3 (step right)
-  // const box3 = BABYLON.MeshBuilder.CreateBox("box3", { height: 3, width:1.5, depth: 1 }, scene);
-  // box3.position = new BABYLON.Vector3(-1, 1.5, 7);
-  // box3.material = defaultBoxMaterial;
-
-  // //box 4 (jump)
-  // const box4 = BABYLON.MeshBuilder.CreateBox("box4", { height: .25, width: 2, depth: .5 }, scene);  
-  // box4.position = new BABYLON.Vector3(0, .123, 9.5);
-  // box4.material = defaultBoxMaterial;
-
 /* ANIMATIONS
   -------------------------------------------------*/
+  dodgeObstacles.forEach((obstacle, index) => {
+    const yAnimation = new BABYLON.Animation(
+      `obstacleAnimation${index}`, 
+      "position.y", 
+      30, 
+      BABYLON.Animation.ANIMATIONTYPE_FLOAT, 
+      BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+    );
+
+    const keyFrames = [];
+    keyFrames.push({ frame: 0, value: obstacle.position.y });
+    keyFrames.push({ frame: 50, value: obstacle.position.y + 0.2 });
+    keyFrames.push({ frame: 100, value: obstacle.position.y });
+
+    yAnimation.setKeys(keyFrames);
+    obstacle.animations.push(yAnimation);
+    scene.beginAnimation(obstacle, 0, 100, true);
+  });
   
-/* CONTROLS
+/* HIT DETECTION: Detect if XR Headset Enters an Obstacle
   -------------------------------------------------*/
+  
 
   /* INTERACTION */
   return scene;
