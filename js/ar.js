@@ -89,9 +89,16 @@ const createScene = async function () {
     obstacle.animations.push(zAnimation);
   };
 
-  obstacles.forEach((obstacle, index) => {
-    createZAnimation(obstacle, index);
-  });
+  scene.beginDirectAnimation(
+    obstacle, 
+    [zAnimation], 
+    0, 
+    200, 
+    true, 
+    speed = 0.5,
+    obstacleFrequency = 1
+  );
+
 
   
 /* HIT DETECTION: Detect if XR Headset Enters an Obstacle
