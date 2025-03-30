@@ -83,7 +83,7 @@ const createEndlessZAnimation = (obstacle, index) => {
     obstacle.position.z -= 0.05; // Adjust speed as needed
     
     // When obstacle moves past a certain point, reset it to the back
-    if (obstacle.position.z < -5) {
+    if (obstacle.position.z < -15) {
       // Find the furthest obstacle
       let maxZ = -Infinity;
       obstacles.forEach(obs => {
