@@ -74,41 +74,34 @@ const createScene = async function () {
     createObstacle("stepRight3", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 21), redMat)
   ];
 
-/* ANIMATIONS
-  -------------------------------------------------*/
-  const createZAnimation = (obstacle, index) => {
-    const zAnimation = new BABYLON.Animation(
-      `zMovement${index}`,
-      "position.z",
-      30,
-      BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-      BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-    );
-
-    const zKeyFrames = [
-      { frame: 0, value: obstacle.position.z },
-      { frame: 100, value: obstacle.position.z - 20 },
-      { frame: 200, value: obstacle.position.z }
-    ];
-
-    zAnimation.setKeys(zKeyFrames);
-
-    scene.beginDirectAnimation(
-      obstacle,
-      [zAnimation],
-      0,
-      200,
-      true,
-      speed = 0.5,
-      obstacleFrequency = 1
-    );
-  };
-
-  obstacles.forEach((obstacle, index) => {
-    createZAnimation(obstacle, index);
+  /* ANIMATIONS
+-------------------------------------------------*/
+const createEndlessZAnimation = (obstacle, index) => {
+  // Create an observer that runs before each frame render
+  scene.registerBeforeRender(() => {
+    // Move the obstacle toward the player (decrease Z value)
+    obstacle.position.z -= 0.05; // Adjust speed as needed
+    
+    // When obstacle moves past a certain point, reset it to the back
+    if (obstacle.position.z < -5) {
+      // Find the furthest obstacle
+      let maxZ = -Infinity;
+      obstacles.forEach(obs => {
+        if (obs.position.z > maxZ) {
+          maxZ = obs.position.z;
+        }
+      });
+      
+      // Place this obstacle behind the furthest one, maintaining the pattern
+      obstacle.position.z = maxZ + 3; // Add spacing between obstacles
+    }
   });
+};
 
-
+// Apply animation to each obstacle
+obstacles.forEach((obstacle, index) => {
+  createEndlessZAnimation(obstacle, index);
+});
   
 /* HIT DETECTION: Detect if XR Headset Enters an Obstacle
   -------------------------------------------------*/
