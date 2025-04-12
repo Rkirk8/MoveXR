@@ -53,7 +53,9 @@ const createScene = async function () {
   // Create a main panel for our controls
   const panel = new BABYLON.GUI.StackPanel3D();
   manager.addControl(panel);
-  panel.position = new BABYLON.Vector3(0, 0, 2);
+  panel.position = new BABYLON.Vector3(0, 0.1, 1); 
+  panel.rotation = new BABYLON.Vector3(-Math.PI/4, 0, 0);
+  panel.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5); 
 
   // Create speed up button
   const speedUpButton = new BABYLON.GUI.HolographicButton("speedUp");
