@@ -57,7 +57,7 @@ const createScene = async function () {
 
   // Position the panel directly in front of the user on the ground
   panel.position = new BABYLON.Vector3(0, 0.1, 1); // x=0 (centered), y=0.1 (slightly above ground), z=1 (in front of user)
-  panel.rotation = new BABYLON.Vector3(-Math.PI / 4, 0, 0); // Tilt the panel slightly upward for better visibility
+  panel.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0); // Tilt the panel slightly upward for better visibility
   panel.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5); // Scale down the panel
   panel.margin = 0.02; // Add spacing between buttons
 
