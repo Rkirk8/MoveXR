@@ -42,8 +42,9 @@ const createScene = async function () {
   -------------------------------------------------*/
   // Create a HUD with speed control buttons
   let speed = 0.05; // Default speed
-  if (camera.isActive) { // Check if the camera is active
-    console.log("Camera is active:", camera.isActive);
+  // Check if XR experience is active
+  if (xr.baseExperience.sessionManager.isSessionActive) {
+    console.log("XR experience is active");
 
     // Create a CUI mesh to display speed
     const speedLevelMesh = BABYLON.MeshBuilder.CreatePlane("speedLevel", { width: 2, height: 0.2 }, scene);
@@ -83,7 +84,7 @@ const createScene = async function () {
       updateSpeedLevel();
     });
   } else {
-    console.log("Camera is not active:", camera.isActive);
+    console.log("XR experience is not active");
 
     const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
