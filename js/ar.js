@@ -44,6 +44,7 @@ const createScene = async function () {
   let speed = 0.05; // Default speed
   //only let user change speed out of xr mode 
   if (xr.baseExperience.sessionManager.isSessionActive) {
+    console.log("XR session active:", xr.baseExperience.sessionManager.isSessionActive);
     // Create a CUI mesh to display speed
     const speedLevelMesh = BABYLON.MeshBuilder.CreatePlane("speedLevel", { width: 2, height: 0.2 }, scene);
     speedLevelMesh.position = new BABYLON.Vector3(0, 1.5, 2); // Position in front of the user
@@ -57,24 +58,24 @@ const createScene = async function () {
   
     // Function to update the speed level display
     const updateSpeedLevel = () => {
-      const ctx = speedTexture.getContext();// Get the 2d context
-      ctx.clearRect(0, 0, 512, 128); // Clear previous content
+      const ctx = speedTexture.getContext(); // Get the 2D rendering context of the dynamic texture
+      ctx.clearRect(0, 0, 512, 128); // Clear the entire canvas area to remove previous drawings
   
       // Draw a background bar
-      ctx.fillStyle = "gray";
-      ctx.fillRect(50, 50, 400, 30);// Draw a rectangle
+      ctx.fillStyle = "gray"; // Set the fill color to gray for the background bar
+      ctx.fillRect(50, 50, 400, 30); // Draw a rectangle at (50, 50) with width 400 and height 30
   
       // Draw the current speed level
-      const speedPercentage = Math.min(speed / 0.2, 1); // Normalize speed (assuming max speed is 0.2)
-      ctx.fillStyle = "green";// Set the fill color to green for the speed level
-      ctx.fillRect(50, 50, 400 * speedPercentage, 30);// Draw the speed level rectangle
+      const speedPercentage = Math.min(speed / 0.2, 1); // Normalize the speed to a maximum of 1 (assuming max speed is 0.2)
+      ctx.fillStyle = "green"; // Set the fill color to green for the speed level
+      ctx.fillRect(50, 50, 400 * speedPercentage, 30); // Draw a rectangle proportional to the current speed
   
       // Draw speed text
-      ctx.fillStyle = "white";
-      ctx.font = "bold 24px Arial";
-      ctx.fillText(`Speed: ${speed.toFixed(2)}`, 200, 40);// Draw the speed text
+      ctx.fillStyle = "white"; // Set the fill color to white for the text
+      ctx.font = "bold 24px Arial"; // Set the font style and size for the text
+      ctx.fillText(`Speed: ${speed.toFixed(2)}`, 200, 40); // Draw the speed text at (200, 40)
   
-      speedTexture.update(); // Update the texture
+      speedTexture.update(); // Update the dynamic texture to reflect the changes made to the canvas
     };
   
     // Update the speed level display on each frame
@@ -82,6 +83,7 @@ const createScene = async function () {
       updateSpeedLevel();
     });
   } else {
+    console.log("XR session active:", xr.baseExperience.sessionManager.isSessionActive);
     const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
     // Speed Display
