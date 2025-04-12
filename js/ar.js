@@ -28,22 +28,6 @@ const createScene = async function () {
     },
     optionalFeatures: ["bounded-floor", "hand-tracking"]
   });
-  // Add debugging for the AR session
-  xr.baseExperience.sessionManager.onStateChangedObservable.add((state) => {
-    switch (state) {
-      case BABYLON.WebXRState.NOT_IN_XR:
-        console.log("Debug: XR session is not active.");
-        break;
-      case BABYLON.WebXRState.READY:
-        console.log("Debug: XR session is ready.");
-        break;
-      case BABYLON.WebXRState.IN_XR:
-        console.log("Debug: XR session is active.");
-        break;
-      default:
-        console.log("Debug: Unknown XR state:", state);
-    }
-  });
 
   /* LIGHTS
   ------------------------------------------------- */
