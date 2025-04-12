@@ -76,11 +76,11 @@ const createScene = async function () {
 
   /* ANIMATIONS
 -------------------------------------------------*/
+let speed = 0.05; // Default speed
 const createEndlessZAnimation = (obstacle, index) => {
   // Create an observer that runs before each frame render
   scene.registerBeforeRender(() => {
     // Move the obstacle toward the player (decrease Z value)
-    let speed = 0.05; 
     obstacle.position.z -= speed; 
     
     // When obstacle moves past a certain point, reset it to the back
