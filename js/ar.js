@@ -40,7 +40,7 @@ const createScene = async function () {
 
   /* HUD x right = '+' / left = '-', y height, z depth
   -------------------------------------------------*/
-  let speed = 0.05; // Default speed
+  let speed = 0.01; // Default speed
   
 
   // Create a CUI mesh to display speed
@@ -104,7 +104,7 @@ const createScene = async function () {
 
   scene.registerBeforeRender(() => {
     updateSpeedLevel();
-    console.log("Speed:", speed);
+    
   });
   /* ENVIRONMENT
   -------------------------------------------------*/
