@@ -55,7 +55,7 @@ const createScene = async function () {
   const panel = new BABYLON.GUI.StackPanel3D();
   manager.addControl(panel);
   panel.position = new BABYLON.Vector3(-2, 1, 1); 
-  panel.rotation = new BABYLON.Vector3(0, Math.PI/6, 0);
+  panel.rotation = new BABYLON.Vector3(0, Math.PI/2, 0);
   panel.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5); 
 
   // Create speed up button
