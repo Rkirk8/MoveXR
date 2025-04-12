@@ -41,7 +41,7 @@ const createScene = async function () {
   /* HUD x right = '+' / left = '-', y height, z depth
   -------------------------------------------------*/
   let speed = 0.05; // Default speed
-  console.log("Speed:", speed);
+  
 
   // Create a CUI mesh to display speed
   const speedLevelMesh = BABYLON.MeshBuilder.CreatePlane("speedLevel", { width: 2, height: 0.2 }, scene);
@@ -81,6 +81,7 @@ const createScene = async function () {
   speedLevelMesh.material = speedMaterial;
 
   const updateSpeedLevel = () => {
+    console.log("Speed:", speed);
     const ctx = speedTexture.getContext();
     ctx.clearRect(0, 0, 512, 128);
 
