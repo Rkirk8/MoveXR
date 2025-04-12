@@ -37,8 +37,11 @@ const createScene = async function () {
     scene,
     intensity = 0.7
   );
+
   /* HUD
   -------------------------------------------------*/
+  // Create a HUD with speed control buttons
+  let speed = 0.05; // Default speed
   const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
   // Speed Display
@@ -120,7 +123,7 @@ const createScene = async function () {
 
   /* ANIMATIONS
   -------------------------------------------------*/
-  let speed = 0.05; // Default speed
+  
   const createEndlessZAnimation = (obstacle, index) => {
     // Create an observer that runs before each frame render
     scene.registerBeforeRender(() => {
