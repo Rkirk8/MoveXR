@@ -25,7 +25,12 @@
     <script src="js/ar.js" defer></script>
 </head>
 <body>
-    <canvas id="renderCanvas" touch-action="none"></canvas>
+    <canvas id="renderCanvas" touch-action="none">
+        <div id="hud" style="position: absolute; top: 10px; right: 10px; z-index: 100; display: flex; flex-direction: column; gap: 10px;">
+            <button id="speedUp" style="padding: 10px; font-size: 16px;">⬆️ Speed Up</button>
+            <button id="speedDown" style="padding: 10px; font-size: 16px;">⬇️ Slow Down</button>
+          </div>
+    </canvas>
     <!-- touch-action="none" for best results from PEP -->
 </body>
 </html>

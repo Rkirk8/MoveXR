@@ -80,7 +80,8 @@ const createEndlessZAnimation = (obstacle, index) => {
   // Create an observer that runs before each frame render
   scene.registerBeforeRender(() => {
     // Move the obstacle toward the player (decrease Z value)
-    obstacle.position.z -= 0.05; // Adjust speed as needed
+    let speed = 0.05; 
+    obstacle.position.z -= speed; 
     
     // When obstacle moves past a certain point, reset it to the back
     if (obstacle.position.z < -15) {
@@ -101,6 +102,23 @@ const createEndlessZAnimation = (obstacle, index) => {
 // Apply animation to each obstacle
 obstacles.forEach((obstacle, index) => {
   createEndlessZAnimation(obstacle, index);
+});
+  // Add event listeners to control speed
+window.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowUp") {
+    speed += 0.01; // Increase speed
+  } else if (event.key === "ArrowDown") {
+    speed = Math.max(0.01, speed - 0.01); // Decrease speed, minimum 0.01
+  }
+});
+  
+  // Add event listeners to control speed with HUD buttons
+document.getElementById("speedUp").addEventListener("click", () => {
+  speed += 0.01; // Increase speed
+});
+
+document.getElementById("speedDown").addEventListener("click", () => {
+  speed = Math.max(0.01, speed - 0.01); // Decrease speed, minimum 0.01
 });
   
 /* HIT DETECTION: Detect if XR Headset Enters an Obstacle
