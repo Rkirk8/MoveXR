@@ -42,121 +42,65 @@ const createScene = async function () {
   -------------------------------------------------*/
   let speed = 0.05; // Default speed
 
-  // Function to check if device supports AR
-  const checkARCapabilities = () => {
-    return !!(navigator.xr && window.isSecureContext && 
-      (window.DeviceOrientationEvent || window.DeviceMotionEvent));
+  // Create a CUI mesh to display speed
+  const speedLevelMesh = BABYLON.MeshBuilder.CreatePlane("speedLevel", { width: 2, height: 0.2 }, scene);
+  speedLevelMesh.position = new BABYLON.Vector3(0, 1.5, 2);
+  speedLevelMesh.rotation = new BABYLON.Vector3(0, Math.PI, 0);
+
+  // Create 3D GUI manager
+  const manager = new BABYLON.GUI.GUI3DManager(scene);
+
+  // Create a main panel for our controls
+  const panel = new BABYLON.GUI.StackPanel3D();
+  manager.addControl(panel);
+  panel.position = new BABYLON.Vector3(0, 0, 2);
+
+  // Create speed up button
+  const speedUpButton = new BABYLON.GUI.HolographicButton("speedUp");
+  panel.addControl(speedUpButton);
+  speedUpButton.text = "Speed Up";
+  speedUpButton.onPointerUpObservable.add(() => {
+    speed += 0.01;
+  });
+
+  // Create speed down button
+  const speedDownButton = new BABYLON.GUI.HolographicButton("speedDown");
+  panel.addControl(speedDownButton);
+  speedDownButton.text = "Slow Down";
+  speedDownButton.onPointerUpObservable.add(() => {
+    speed = Math.max(0.01, speed - 0.01);
+  });
+
+  // Speed display texture and updates remain the same
+  const speedTexture = new BABYLON.DynamicTexture("speedTexture", { width: 512, height: 128 }, scene);
+  const speedMaterial = new BABYLON.StandardMaterial("speedMaterial", scene);
+  speedMaterial.diffuseTexture = speedTexture;
+  speedLevelMesh.material = speedMaterial;
+
+  const updateSpeedLevel = () => {
+    const ctx = speedTexture.getContext();
+    ctx.clearRect(0, 0, 512, 128);
+
+    // Draw background bar
+    ctx.fillStyle = "gray";
+    ctx.fillRect(50, 50, 400, 30);
+
+    // Draw speed bar
+    const speedPercentage = Math.min(speed / 0.2, 1);
+    ctx.fillStyle = "green";
+    ctx.fillRect(50, 50, 400 * speedPercentage, 30);
+
+    // Draw speed text
+    ctx.fillStyle = "white";
+    ctx.font = "bold 24px Arial";
+    ctx.fillText(`Speed: ${speed.toFixed(2)}`, 200, 40);
+
+    speedTexture.update();
   };
 
-  if (checkARCapabilities() && xr.baseExperience) {
-    console.log("AR capable device detected");
-
-    // Create a CUI mesh to display speed
-    const speedLevelMesh = BABYLON.MeshBuilder.CreatePlane("speedLevel", { width: 2, height: 0.2 }, scene);
-    speedLevelMesh.position = new BABYLON.Vector3(0, 1.5, 2);
-    speedLevelMesh.rotation = new BABYLON.Vector3(0, Math.PI, 0);
-
-    // Create 3D GUI manager
-    const manager = new BABYLON.GUI.GUI3DManager(scene);
-
-    // Create a main panel for our controls
-    const panel = new BABYLON.GUI.StackPanel3D();
-    manager.addControl(panel);
-    panel.position = new BABYLON.Vector3(2, 1.5, 2);
-
-    // Create speed up button
-    const speedUpButton = new BABYLON.GUI.HolographicButton("speedUp");
-    panel.addControl(speedUpButton);
-    speedUpButton.text = "Speed Up";
-    speedUpButton.onPointerUpObservable.add(() => {
-      speed += 0.01;
-    });
-
-    // Create speed down button
-    const speedDownButton = new BABYLON.GUI.HolographicButton("speedDown");
-    panel.addControl(speedDownButton);
-    speedDownButton.text = "Slow Down";
-    speedDownButton.onPointerUpObservable.add(() => {
-      speed = Math.max(0.01, speed - 0.01);
-    });
-
-    // Speed display texture and updates remain the same
-    const speedTexture = new BABYLON.DynamicTexture("speedTexture", { width: 512, height: 128 }, scene);
-    const speedMaterial = new BABYLON.StandardMaterial("speedMaterial", scene);
-    speedMaterial.diffuseTexture = speedTexture;
-    speedLevelMesh.material = speedMaterial;
-
-    const updateSpeedLevel = () => {
-      const ctx = speedTexture.getContext();
-      ctx.clearRect(0, 0, 512, 128);
-
-      // Draw background bar
-      ctx.fillStyle = "gray";
-      ctx.fillRect(50, 50, 400, 30);
-
-      // Draw speed bar
-      const speedPercentage = Math.min(speed / 0.2, 1);
-      ctx.fillStyle = "green";
-      ctx.fillRect(50, 50, 400 * speedPercentage, 30);
-
-      // Draw speed text
-      ctx.fillStyle = "white";
-      ctx.font = "bold 24px Arial";
-      ctx.fillText(`Speed: ${speed.toFixed(2)}`, 200, 40);
-
-      speedTexture.update();
-    };
-
-    scene.registerBeforeRender(() => {
-      updateSpeedLevel();
-    });
-
-  } else {
-    console.log("Using standard display mode");
-
-    const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-
-    // Speed Display
-    const speedDisplay = new BABYLON.GUI.TextBlock();
-    speedDisplay.text = `Speed: ${speed.toFixed(2)}`;
-    speedDisplay.color = "white";
-    speedDisplay.fontSize = 24;
-    speedDisplay.top = "-40px";
-    speedDisplay.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-    speedDisplay.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-    advancedTexture.addControl(speedDisplay);
-
-    // Speed Up Button
-    const speedUpButton = BABYLON.GUI.Button.CreateSimpleButton("speedUp", "⬆️ Speed Up");
-    speedUpButton.width = "150px";
-    speedUpButton.height = "40px";
-    speedUpButton.color = "white";
-    speedUpButton.background = "green";
-    speedUpButton.top = "10px";
-    speedUpButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-    speedUpButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-    speedUpButton.onPointerClickObservable.add(() => {
-      speed += 0.01;
-      speedDisplay.text = `Speed: ${speed.toFixed(2)}`;
-    });
-    advancedTexture.addControl(speedUpButton);
-
-    // Speed Down Button
-    const speedDownButton = BABYLON.GUI.Button.CreateSimpleButton("speedDown", "⬇️ Slow Down");
-    speedDownButton.width = "150px";
-    speedDownButton.height = "40px";
-    speedDownButton.color = "white";
-    speedDownButton.background = "red";
-    speedDownButton.top = "60px";
-    speedDownButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-    speedDownButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-    speedDownButton.onPointerClickObservable.add(() => {
-      speed = Math.max(0.01, speed - 0.01);
-      speedDisplay.text = `Speed: ${speed.toFixed(2)}`;
-    });
-    advancedTexture.addControl(speedDownButton);
-  }
-
+  scene.registerBeforeRender(() => {
+    updateSpeedLevel();
+  });
   /* ENVIRONMENT
   -------------------------------------------------*/
   // If there is time, add a skybox option
