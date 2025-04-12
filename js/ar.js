@@ -45,8 +45,8 @@ const createScene = async function () {
 
   // Create a CUI mesh to display speed
   const speedLevelMesh = BABYLON.MeshBuilder.CreatePlane("speedLevel", { width: 2, height: 0.2 }, scene);
-  speedLevelMesh.position = new BABYLON.Vector3(-2, 1.2, 2);
-  speedLevelMesh.rotation = new BABYLON.Vector3(0, Math.PI/ 2, 0);
+  speedLevelMesh.position = new BABYLON.Vector3(0, 0.3, 1); // Position it just above the panel
+  speedLevelMesh.rotation = new BABYLON.Vector3(-Math.PI / 4, 0, 0); // Tilt slightly upward for better visibility
 
   // Create 3D GUI manager
   const manager = new BABYLON.GUI.GUI3DManager(scene);
@@ -57,7 +57,7 @@ const createScene = async function () {
 
   // Position the panel directly in front of the user on the ground
   panel.position = new BABYLON.Vector3(0, 0.1, 1); // x=0 (centered), y=0.1 (slightly above ground), z=1 (in front of user)
-  panel.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0); // Tilt the panel slightly upward for better visibility
+  panel.rotation = new BABYLON.Vector3(-Math.PI / 4, 0, 0); // Tilt the panel slightly upward for better visibility
   panel.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5); // Scale down the panel
   panel.margin = 0.02; // Add spacing between buttons
 
@@ -84,7 +84,6 @@ const createScene = async function () {
   speedLevelMesh.material = speedMaterial;
 
   const updateSpeedLevel = () => {
-    
     const ctx = speedTexture.getContext();
     ctx.clearRect(0, 0, 512, 128);
 
@@ -107,8 +106,8 @@ const createScene = async function () {
 
   scene.registerBeforeRender(() => {
     updateSpeedLevel();
-    
   });
+
   /* ENVIRONMENT
   -------------------------------------------------*/
   // If there is time, add a skybox option
