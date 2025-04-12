@@ -81,7 +81,7 @@ const createScene = async function () {
   speedLevelMesh.material = speedMaterial;
 
   const updateSpeedLevel = () => {
-    console.log("Speed:", speed);
+    
     const ctx = speedTexture.getContext();
     ctx.clearRect(0, 0, 512, 128);
 
@@ -104,6 +104,7 @@ const createScene = async function () {
 
   scene.registerBeforeRender(() => {
     updateSpeedLevel();
+    console.log("Speed:", speed);
   });
   /* ENVIRONMENT
   -------------------------------------------------*/
