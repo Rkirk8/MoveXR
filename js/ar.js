@@ -41,6 +41,7 @@ const createScene = async function () {
   /* HUD x right = '+' / left = '-', y height, z depth
   -------------------------------------------------*/
   let speed = 0.05; // Default speed
+  console.log("Speed:", speed);
 
   // Create a CUI mesh to display speed
   const speedLevelMesh = BABYLON.MeshBuilder.CreatePlane("speedLevel", { width: 2, height: 0.2 }, scene);
