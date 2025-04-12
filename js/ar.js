@@ -41,12 +41,47 @@ const createScene = async function () {
   /* HUD x right = '+' / left = '-', y height, z depth
   -------------------------------------------------*/
   let speed = 0.01; // Default speed
-  
 
   // Create a CUI mesh to display speed
   const speedLevelMesh = BABYLON.MeshBuilder.CreatePlane("speedLevel", { width: 2, height: 0.2 }, scene);
-  speedLevelMesh.position = new BABYLON.Vector3(0, 0.5, 1); // Position it just above the panel
-  speedLevelMesh.rotation = new BABYLON.Vector3(-Math.PI / 4, 0, 0); // Tilt slightly upward for better visibility
+  speedLevelMesh.position = new BABYLON.Vector3(0, 1.5, 2); // Position it in front of the user
+  speedLevelMesh.rotation = new BABYLON.Vector3(0, 0, 0); // Face directly toward the user
+
+  // Attach the speed level mesh to the XR camera to ensure it stays in the user's view
+  xr.baseExperience.camera.parent = speedLevelMesh;
+
+  // Create a dynamic texture for the speed level
+  const speedTexture = new BABYLON.DynamicTexture("speedTexture", { width: 512, height: 128 }, scene);
+  const speedMaterial = new BABYLON.StandardMaterial("speedMaterial", scene);
+  speedMaterial.diffuseTexture = speedTexture;
+  speedLevelMesh.material = speedMaterial;
+
+  // Function to update the speed level display
+  const updateSpeedLevel = () => {
+    const ctx = speedTexture.getContext();
+    ctx.clearRect(0, 0, 512, 128);
+
+    // Draw background bar
+    ctx.fillStyle = "gray";
+    ctx.fillRect(50, 50, 400, 30);
+
+    // Draw speed bar
+    const speedPercentage = Math.min(speed / 0.2, 1);
+    ctx.fillStyle = "green";
+    ctx.fillRect(50, 50, 400 * speedPercentage, 30);
+
+    // Draw speed text
+    ctx.fillStyle = "white";
+    ctx.font = "bold 24px Arial";
+    ctx.fillText(`Speed: ${speed.toFixed(2)}`, 200, 40);
+
+    speedTexture.update();
+  };
+
+  // Update the speed level display on each frame
+  scene.registerBeforeRender(() => {
+    updateSpeedLevel();
+  });
 
   // Create 3D GUI manager
   const manager = new BABYLON.GUI.GUI3DManager(scene);
@@ -75,37 +110,6 @@ const createScene = async function () {
   speedDownButton.text = "Slow Down";
   speedDownButton.onPointerUpObservable.add(() => {
     speed = Math.max(0.01, speed - 0.01);
-  });
-
-  // Speed display texture and updates remain the same
-  const speedTexture = new BABYLON.DynamicTexture("speedTexture", { width: 512, height: 128 }, scene);
-  const speedMaterial = new BABYLON.StandardMaterial("speedMaterial", scene);
-  speedMaterial.diffuseTexture = speedTexture;
-  speedLevelMesh.material = speedMaterial;
-
-  const updateSpeedLevel = () => {
-    const ctx = speedTexture.getContext();
-    ctx.clearRect(0, 0, 512, 128);
-
-    // Draw background bar
-    ctx.fillStyle = "gray";
-    ctx.fillRect(50, 50, 400, 30);
-
-    // Draw speed bar
-    const speedPercentage = Math.min(speed / 0.2, 1);
-    ctx.fillStyle = "green";
-    ctx.fillRect(50, 50, 400 * speedPercentage, 30);
-
-    // Draw speed text
-    ctx.fillStyle = "white";
-    ctx.font = "bold 24px Arial";
-    ctx.fillText(`Speed: ${speed.toFixed(2)}`, 200, 40);
-
-    speedTexture.update();
-  };
-
-  scene.registerBeforeRender(() => {
-    updateSpeedLevel();
   });
 
   /* ENVIRONMENT
