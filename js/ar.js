@@ -45,7 +45,7 @@ const createScene = async function () {
 
   // Create a CUI mesh to display speed
   const speedLevelMesh = BABYLON.MeshBuilder.CreatePlane("speedLevel", { width: 2, height: 0.2 }, scene);
-  speedLevelMesh.position = new BABYLON.Vector3(0, 0.3, 1); // Position it just above the panel
+  speedLevelMesh.position = new BABYLON.Vector3(0, 0.5, 1); // Position it just above the panel
   speedLevelMesh.rotation = new BABYLON.Vector3(-Math.PI / 4, 0, 0); // Tilt slightly upward for better visibility
 
   // Create 3D GUI manager
