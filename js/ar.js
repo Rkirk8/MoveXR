@@ -37,6 +37,49 @@ const createScene = async function () {
     scene,
     intensity = 0.7
   );
+  /* HUD
+  -------------------------------------------------*/
+  const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+  // Speed Display
+  const speedDisplay = new BABYLON.GUI.TextBlock();
+  speedDisplay.text = `Speed: ${speed.toFixed(2)}`;
+  speedDisplay.color = "white";
+  speedDisplay.fontSize = 24;
+  speedDisplay.top = "-40px";
+  speedDisplay.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+  speedDisplay.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+  advancedTexture.addControl(speedDisplay);
+
+  // Speed Up Button
+  const speedUpButton = BABYLON.GUI.Button.CreateSimpleButton("speedUp", "⬆️ Speed Up");
+  speedUpButton.width = "150px";
+  speedUpButton.height = "40px";
+  speedUpButton.color = "white";
+  speedUpButton.background = "green";
+  speedUpButton.top = "10px";
+  speedUpButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+  speedUpButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+  speedUpButton.onPointerClickObservable.add(() => {
+    speed += 0.01; // Increase speed
+    speedDisplay.text = `Speed: ${speed.toFixed(2)}`;
+  });
+  advancedTexture.addControl(speedUpButton);
+
+  // Speed Down Button
+  const speedDownButton = BABYLON.GUI.Button.CreateSimpleButton("speedDown", "⬇️ Slow Down");
+  speedDownButton.width = "150px";
+  speedDownButton.height = "40px";
+  speedDownButton.color = "white";
+  speedDownButton.background = "red";
+  speedDownButton.top = "60px";
+  speedDownButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+  speedDownButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+  speedDownButton.onPointerClickObservable.add(() => {
+    speed = Math.max(0.01, speed - 0.01); // Decrease speed, minimum 0.01
+    speedDisplay.text = `Speed: ${speed.toFixed(2)}`;
+  });
+  advancedTexture.addControl(speedDownButton);
 
   /* ENVIRONMENT
   -------------------------------------------------*/
@@ -74,58 +117,69 @@ const createScene = async function () {
     createObstacle("stepRight3", { height: 3, width: 1.5, depth: 1 }, new BABYLON.Vector3(-1, 1.5, 21), redMat)
   ];
 
+
   /* ANIMATIONS
--------------------------------------------------*/
-let speed = 0.05; // Default speed
-const createEndlessZAnimation = (obstacle, index) => {
-  // Create an observer that runs before each frame render
-  scene.registerBeforeRender(() => {
-    // Move the obstacle toward the player (decrease Z value)
-    obstacle.position.z -= speed; 
-    
-    // When obstacle moves past a certain point, reset it to the back
-    if (obstacle.position.z < -15) {
-      // Find the furthest obstacle
-      let maxZ = -Infinity;
-      obstacles.forEach(obs => {
-        if (obs.position.z > maxZ) {
-          maxZ = obs.position.z;
-        }
-      });
-      
-      // Place this obstacle behind the furthest one, maintaining the pattern
-      obstacle.position.z = maxZ + 3; // Add spacing between obstacles
-    }
-  });
-};
-
-// Apply animation to each obstacle
-obstacles.forEach((obstacle, index) => {
-  createEndlessZAnimation(obstacle, index);
-});
-  // Add event listeners to control speed
-window.addEventListener("keydown", (event) => {
-  if (event.key === "ArrowUp") {
-    speed += 0.01; // Increase speed
-  } else if (event.key === "ArrowDown") {
-    speed = Math.max(0.01, speed - 0.01); // Decrease speed, minimum 0.01
-  }
-});
-  
-  // Add event listeners to control speed with HUD buttons
-document.getElementById("speedUp").addEventListener("click", () => {
-  speed += 0.01; // Increase speed
-});
-
-document.getElementById("speedDown").addEventListener("click", () => {
-  speed = Math.max(0.01, speed - 0.01); // Decrease speed, minimum 0.01
-});
-  
-/* HIT DETECTION: Detect if XR Headset Enters an Obstacle
   -------------------------------------------------*/
-  
+  let speed = 0.05; // Default speed
+  const createEndlessZAnimation = (obstacle, index) => {
+    // Create an observer that runs before each frame render
+    scene.registerBeforeRender(() => {
+      // Move the obstacle toward the player (decrease Z value)
+      obstacle.position.z -= speed; 
+      
+      // When obstacle moves past a certain point, reset it to the back
+      if (obstacle.position.z < -15) {
+        // Find the furthest obstacle
+        let maxZ = -Infinity;
+        obstacles.forEach(obs => {
+          if (obs.position.z > maxZ) {
+            maxZ = obs.position.z;
+          }
+        });
+        
+        // Place this obstacle behind the furthest one, maintaining the pattern
+        obstacle.position.z = maxZ + 3; // Add spacing between obstacles
+      }
+    });
+  };
+
+  // Apply animation to each obstacle
+  obstacles.forEach((obstacle, index) => {
+    createEndlessZAnimation(obstacle, index);
+  });
+    // Add event listeners to control speed
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowUp") {
+      speed += 0.01; // Increase speed
+    } else if (event.key === "ArrowDown") {
+      speed = Math.max(0.01, speed - 0.01); // Decrease speed, minimum 0.01
+    }
+    updateSpeedDisplay(); // Update speed display in HUD
+  });
+    
+    // Add event listeners to control speed with HUD buttons
+  document.getElementById("speedUp").addEventListener("click", () => {
+    speed += 0.01; // Increase speed
+    updateSpeedDisplay();
+  });
+
+  document.getElementById("speedDown").addEventListener("click", () => {
+    speed = Math.max(0.01, speed - 0.01); // Decrease speed, minimum 0.01
+    updateSpeedDisplay();
+  });
+    
+  /* HIT DETECTION: Detect if XR Headset Enters an Obstacle
+    -------------------------------------------------*/
+    
 
   /* INTERACTION */
+  // Function to update the speed display in the HUD
+    const updateSpeedDisplay = () => {
+      const speedDisplay = document.getElementById("speedDisplay");
+      speedDisplay.textContent = `Speed: ${speed.toFixed(2)}`;
+    };
+    //call speed display
+    updateSpeedDisplay();
   return scene;
 };
 
