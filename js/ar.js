@@ -70,7 +70,8 @@ const createScene = async function () {
     // Draw speed text
     ctx.fillStyle = "white";
     ctx.font = "bold 24px Arial";
-    ctx.fillText(`Speed: ${speed.toFixed(2)}`, 200, 40);
+    const speedLevel = Math.ceil(speed * 10); // Convert speed to a scale of 1-10
+  ctx.fillText(`Level: ${speedLevel}/10`, 200, 40);
 
     speedTexture.update();
   };
@@ -109,6 +110,23 @@ const createScene = async function () {
   speedDownButton.text = "Slow Down";
   speedDownButton.onPointerUpObservable.add(() => {
     speed = Math.max(0.01, speed - 0.01);
+  });
+
+  // Create pause button
+  const pauseButton = new BABYLON.GUI.HolographicButton("pause");
+  panel.addControl(pauseButton);
+  pauseButton.text = "Pause";
+  let isPaused = false; // Track animation state
+  pauseButton.onPointerUpObservable.add(() => {
+    isPaused = true; // Pause the animation
+  });
+
+  // Create play button
+  const playButton = new BABYLON.GUI.HolographicButton("play");
+  panel.addControl(playButton);
+  playButton.text = "Play";
+  playButton.onPointerUpObservable.add(() => {
+    isPaused = false; // Resume the animation
   });
 
   /* ENVIRONMENT
@@ -151,21 +169,23 @@ const createScene = async function () {
   const createEndlessZAnimation = (obstacle, index) => {
     // Create an observer that runs before each frame render
     scene.registerBeforeRender(() => {
-      // Move the obstacle toward the player (decrease Z value)
-      obstacle.position.z -= speed; 
-      
-      // When obstacle moves past a certain point, reset it to the back
-      if (obstacle.position.z < -15) {
-        // Find the furthest obstacle
-        let maxZ = -Infinity;
-        obstacles.forEach(obs => {
-          if (obs.position.z > maxZ) {
-            maxZ = obs.position.z;
-          }
-        });
+      if (!isPaused) { // Only move obstacles if not paused
+        // Move the obstacle toward the player (decrease Z value)
+        obstacle.position.z -= speed; 
         
-        // Place this obstacle behind the furthest one, maintaining the pattern
-        obstacle.position.z = maxZ + 3; // Add spacing between obstacles
+        // When obstacle moves past a certain point, reset it to the back
+        if (obstacle.position.z < -15) {
+          // Find the furthest obstacle
+          let maxZ = -Infinity;
+          obstacles.forEach(obs => {
+            if (obs.position.z > maxZ) {
+              maxZ = obs.position.z;
+            }
+          });
+          
+          // Place this obstacle behind the furthest one, maintaining the pattern
+          obstacle.position.z = maxZ + 3; // Add spacing between obstacles
+        }
       }
     });
   };
