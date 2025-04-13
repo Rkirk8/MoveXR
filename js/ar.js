@@ -70,8 +70,8 @@ const createScene = async function () {
     // Draw speed text
     ctx.fillStyle = "white";
     ctx.font = "bold 24px Arial";
-    const speedLevel = Math.floor(speed * 100); // Convert speed X 100
-    ctx.fillText(`Level: ${speedLevel}`, 200, 40);
+    const speedLevel = Math.floor(speed * 10); // Convert speed to a scale of 1-10
+    ctx.fillText(`Level: ${speedLevel}/10`, 200, 40);
 
     speedTexture.update();
   };
@@ -81,66 +81,6 @@ const createScene = async function () {
     const cameraPosition = xr.baseExperience.camera.position;
     speedLevelMesh.position = new BABYLON.Vector3(cameraPosition.x, cameraPosition.y + 1.5, cameraPosition.z + 2); // Keep it in front of the user
     updateSpeedLevel();
-  });
-
-  // Initialize the score
-  let score = 0;
-
-  // Create a dynamic texture for the score display
-  const scoreTexture = new BABYLON.DynamicTexture("scoreTexture", { width: 512, height: 128 }, scene);
-  const scoreMaterial = new BABYLON.StandardMaterial("scoreMaterial", scene);
-  scoreMaterial.diffuseTexture = scoreTexture;
-  speedLevelMesh.material = scoreMaterial; // Reuse the existing speedLevelMesh for the score display
-
-  // Function to update the score display
-  const updateScoreDisplay = () => {
-    const ctx = scoreTexture.getContext();
-    ctx.clearRect(0, 0, 512, 128);
-
-    // Draw background bar
-    ctx.fillStyle = "gray";
-    ctx.fillRect(50, 50, 400, 30);
-
-    // Draw score text
-    ctx.fillStyle = "white";
-    ctx.font = "bold 24px Arial";
-    ctx.fillText(`Score: ${score}`, 200, 40);
-
-    scoreTexture.update();
-  };
-
-  // Dynamically position the score display in front of the user
-  scene.registerBeforeRender(() => {
-    const cameraPosition = xr.baseExperience.camera.position;
-    speedLevelMesh.position = new BABYLON.Vector3(cameraPosition.x, cameraPosition.y + 1.5, cameraPosition.z + 2); // Keep it in front of the user
-    updateScoreDisplay();
-  });
-
-  // Increment the score over time
-  scene.registerBeforeRender(() => {
-    if (!isPaused) {
-      score += 1; // Increment score (adjust increment rate as needed)
-    }
-  });
-
-  // Increment the score for each obstacle not hit
-  obstacles.forEach((obstacle) => {
-    scene.registerBeforeRender(() => {
-      if (!isPaused && obstacle.position.z < xr.baseExperience.camera.position.z - 1) {
-        // Check if the obstacle has moved past the player
-        score += 1; // Add 1 point for avoiding the obstacle
-        console.log(`Score increased! Current score: ${score}`);
-        
-        // Move the obstacle further back to reset its position
-        let maxZ = -Infinity;
-        obstacles.forEach((obs) => {
-          if (obs.position.z > maxZ) {
-            maxZ = obs.position.z;
-          }
-        });
-        obstacle.position.z = maxZ + 3; // Reset obstacle position
-      }
-    });
   });
 
   // Create 3D GUI manager
