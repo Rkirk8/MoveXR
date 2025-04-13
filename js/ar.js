@@ -71,7 +71,7 @@ const createScene = async function () {
     ctx.fillStyle = "white";
     ctx.font = "bold 24px Arial";
     const speedLevel = Math.floor(speed * 100); 
-    ctx.fillText(`Level: ${speedLevel}/10`, 200, 40);
+    ctx.fillText(`Level: ${speedLevel}`, 50, 200, 40);
 
     speedTexture.update();
   };
@@ -193,6 +193,20 @@ const createScene = async function () {
 
   /* HIT DETECTION: Detect if XR Headset Enters an Obstacle
   -------------------------------------------------*/
+  scene.registerBeforeRender(() => {
+    const headsetPosition = xr.baseExperience.camera.position; // Get the XR headset's position
+
+    obstacles.forEach((obstacle) => {
+      const obstacleBoundingBox = obstacle.getBoundingInfo().boundingBox; // Get the obstacle's bounding box
+      const isColliding = obstacleBoundingBox.intersectsPoint(headsetPosition); // Check if the headset is inside the bounding box
+
+      if (isColliding) {
+        console.log(`Collision detected with obstacle: ${obstacle.name}`);
+        isPaused = true; // Pause the game on collision
+        // Handle collision (e.g., reset game, reduce score, etc.)
+      }
+    });
+  });
 
   return scene;
 };
