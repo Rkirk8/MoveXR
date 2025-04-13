@@ -41,6 +41,8 @@ const createScene = async function () {
   /* HUD x right = '+' / left = '-', y height, z depth
   -------------------------------------------------*/
   let speed = 0.01; // Default speed
+  let counter = 0; // Initialize counter for objects passed
+  let showScore = false; // Flag to determine if the score should be displayed
 
   // Create a CUI mesh to display speed
   const speedLevelMesh = BABYLON.MeshBuilder.CreatePlane("speedLevel", { width: 2, height: 0.2 }, scene);
@@ -62,25 +64,24 @@ const createScene = async function () {
     ctx.fillStyle = "gray";
     ctx.fillRect(0, 0, 512, 128);
 
-    // Draw speed level text
-    ctx.fillStyle = "white";
-    ctx.font = "bold 24px Arial";
-    ctx.textAlign = "left";
-    const speedLevel = Math.floor(speed * 100); // Convert speed to a full number for display
-    ctx.fillText(`Level: ${speedLevel}`, 50, 40);
-
-    // Draw objects passed text
-    ctx.fillStyle = "white";
-    ctx.font = "bold 24px Arial";
-    ctx.textAlign = "left";
-    ctx.fillText(`Objects Passed: ${counter}`, 50, 80);
+    if (showScore) {
+      // Show the score when the game is paused
+      ctx.fillStyle = "red";
+      ctx.font = "bold 36px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(`Score: ${counter}`, 256, 64);
+    } else {
+      // Show speed level and objects passed during gameplay
+      ctx.fillStyle = "white";
+      ctx.font = "bold 24px Arial";
+      ctx.textAlign = "left";
+      const speedLevel = Math.floor(speed * 100); // Convert speed to a full number for display
+      ctx.fillText(`Level: ${speedLevel}`, 50, 40);
+      ctx.fillText(`Objects Passed: ${counter}`, 50, 80);
+    }
 
     speedTexture.update();
   };
-
-  /* HUD: OBJECTS PASSED COUNTER
-  -------------------------------------------------*/
-  let counter = 0; // Initialize counter for objects passed
 
   // Dynamically position the HUD display in front of the user
   scene.registerBeforeRender(() => {
@@ -125,6 +126,7 @@ const createScene = async function () {
   let isPaused = false; // Track animation state
   pauseButton.onPointerUpObservable.add(() => {
     isPaused = true; // Pause the animation
+    showScore = true; // Show the score
   });
 
   // Create play button
@@ -132,7 +134,9 @@ const createScene = async function () {
   panel.addControl(playButton);
   playButton.text = "Play";
   playButton.onPointerUpObservable.add(() => {
-    isPaused = false; // Resume the animation
+    isPaused = false; // Resume the game
+    showScore = false; // Hide the score
+    counter = 0; // Reset the score
   });
 
   /* ENVIRONMENT
@@ -210,7 +214,7 @@ const createScene = async function () {
       if (isColliding) {
         console.log(`Collision detected with obstacle: ${obstacle.name}`);
         isPaused = true; // Pause the game on collision
-        // Handle collision (e.g., reset game, reduce score, etc.)
+        showScore = true; // Show the score
       }
     });
   });
