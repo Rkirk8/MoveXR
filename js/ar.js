@@ -70,8 +70,8 @@ const createScene = async function () {
     // Draw speed text
     ctx.fillStyle = "white";
     ctx.font = "bold 24px Arial";
-    const speedLevel = Math.floor(speed * 10); // Convert speed to a scale of 1-10
-    ctx.fillText(`Level: ${speedLevel}/10`, 200, 40);
+    const speedLevel = Math.floor(speed * 100); // Convert speed to a full number for display
+    ctx.fillText(`Level: ${speedLevel}`, 200, 40);
 
     speedTexture.update();
   };
