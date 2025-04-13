@@ -38,7 +38,8 @@ const createScene = async function () {
     intensity = 0.7
   );
 
-  /* HUD x right = '+' / left = '-', y height, z depth
+  /* HUD 
+   x right = '+' / left = '-', y height, z depth
   -------------------------------------------------*/
   let speed = 0.01; // Default speed
   let counter = 0; // Initialize counter for objects passed
@@ -183,7 +184,7 @@ const createScene = async function () {
 
         // When obstacle moves past a certain point, reset it to the back
         if (obstacle.position.z < -15) {
-          let maxZ = -Infinity;
+          let maxZ = -10;
           obstacles.forEach(obs => {
             if (obs.position.z > maxZ) {
               maxZ = obs.position.z;
@@ -191,7 +192,6 @@ const createScene = async function () {
           });
 
           obstacle.position.z = maxZ + 3; // Add spacing between obstacles
-          counter++; // Increment the counter when an obstacle resets
         }
       }
     });
@@ -215,6 +215,9 @@ const createScene = async function () {
         console.log(`Collision detected with obstacle: ${obstacle.name}`);
         isPaused = true; // Pause the game on collision
         showScore = true; // Show the score
+      } else if (obstacle.position.z < headsetPosition.z) {
+        // If the headset moves past an obstacle, increment the counter
+        counter++;
       }
     });
   });
