@@ -76,11 +76,34 @@ const createScene = async function () {
     speedTexture.update();
   };
 
+  /* HUD: OBJECTS PASSED COUNTER
+  -------------------------------------------------*/
+  let counter = 0; // Initialize counter for objects passed
+
+  // Function to update the counter display
+  const updateCounterDisplay = () => {
+    const ctx = speedTexture.getContext();
+    ctx.clearRect(0, 0, 512, 128);
+
+    // Draw background
+    ctx.fillStyle = "gray";
+    ctx.fillRect(0, 0, 512, 128);
+
+    // Draw counter text
+    ctx.fillStyle = "white";
+    ctx.font = "bold 36px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(`Objects Passed: ${counter}`, 256, 64);
+
+    speedTexture.update();
+  };
+
   // Dynamically position the speed level in front of the user
   scene.registerBeforeRender(() => {
     const cameraPosition = xr.baseExperience.camera.position;
     speedLevelMesh.position = new BABYLON.Vector3(cameraPosition.x, cameraPosition.y + 1.5, cameraPosition.z + 2); // Keep it in front of the user
     updateSpeedLevel();
+    updateCounterDisplay();
   });
 
   // Create 3D GUI manager
@@ -181,6 +204,7 @@ const createScene = async function () {
           });
 
           obstacle.position.z = maxZ + 3; // Add spacing between obstacles
+          counter++; // Increment the counter when an obstacle resets
         }
       }
     });
