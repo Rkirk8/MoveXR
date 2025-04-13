@@ -53,25 +53,27 @@ const createScene = async function () {
   speedMaterial.diffuseTexture = speedTexture;
   speedLevelMesh.material = speedMaterial;
 
-  // Function to update the speed level display
-  const updateSpeedLevel = () => {
+  // Function to update the HUD display with both speed level and objects passed
+  const updateHUDDisplay = () => {
     const ctx = speedTexture.getContext();
     ctx.clearRect(0, 0, 512, 128);
 
-    // Draw background bar
+    // Draw background
     ctx.fillStyle = "gray";
-    ctx.fillRect(50, 50, 400, 30);
+    ctx.fillRect(0, 0, 512, 128);
 
-    // Draw speed bar
-    const speedPercentage = Math.min(speed / 0.2, 1); // Normalize speed to a percentage
-    ctx.fillStyle = "green";
-    ctx.fillRect(50, 50, 400 * speedPercentage, 30);
-
-    // Draw speed text
+    // Draw speed level text
     ctx.fillStyle = "white";
     ctx.font = "bold 24px Arial";
+    ctx.textAlign = "left";
     const speedLevel = Math.floor(speed * 100); // Convert speed to a full number for display
-    ctx.fillText(`Level: ${speedLevel}`, 200, 40);
+    ctx.fillText(`Level: ${speedLevel}`, 50, 40);
+
+    // Draw objects passed text
+    ctx.fillStyle = "white";
+    ctx.font = "bold 24px Arial";
+    ctx.textAlign = "left";
+    ctx.fillText(`Objects Passed: ${counter}`, 50, 80);
 
     speedTexture.update();
   };
@@ -80,30 +82,11 @@ const createScene = async function () {
   -------------------------------------------------*/
   let counter = 0; // Initialize counter for objects passed
 
-  // Function to update the counter display
-  const updateCounterDisplay = () => {
-    const ctx = speedTexture.getContext();
-    ctx.clearRect(0, 0, 512, 128);
-
-    // Draw background
-    ctx.fillStyle = "gray";
-    ctx.fillRect(0, 0, 512, 128);
-
-    // Draw counter text
-    ctx.fillStyle = "white";
-    ctx.font = "bold 36px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText(`Objects Passed: ${counter}`, 256, 64);
-
-    speedTexture.update();
-  };
-
-  // Dynamically position the speed level in front of the user
+  // Dynamically position the HUD display in front of the user
   scene.registerBeforeRender(() => {
     const cameraPosition = xr.baseExperience.camera.position;
     speedLevelMesh.position = new BABYLON.Vector3(cameraPosition.x, cameraPosition.y + 1.5, cameraPosition.z + 2); // Keep it in front of the user
-    updateSpeedLevel();
-    updateCounterDisplay();
+    updateHUDDisplay();
   });
 
   // Create 3D GUI manager
