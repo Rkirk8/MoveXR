@@ -32,9 +32,9 @@ const createScene = async function () {
   const light = new BABYLON.HemisphericLight(
     "light",
     new BABYLON.Vector3(1, 1, 0),
-    scene,
-    intensity = 0.7
+    scene
   );
+  light.intensity = 0.7;
 
   /* HUD (HEAD-UP DISPLAY)
   -------------------------------------------------*/
@@ -89,7 +89,11 @@ const createScene = async function () {
   const scoreTexture = new BABYLON.DynamicTexture("scoreTexture", { width: 512, height: 128 }, scene);
   const scoreMaterial = new BABYLON.StandardMaterial("scoreMaterial", scene);
   scoreMaterial.diffuseTexture = scoreTexture;
-  speedLevelMesh.material = scoreMaterial; // Reuse the existing speedLevelMesh for the score display
+
+  // Create a separate mesh for the score display
+  const scoreMesh = BABYLON.MeshBuilder.CreatePlane("scoreDisplay", { width: 2, height: 0.2 }, scene);
+  scoreMesh.position = new BABYLON.Vector3(0, 1.8, 2); // Slightly above the speed level
+  scoreMesh.material = scoreMaterial;
 
   // Function to update the score display
   const updateScoreDisplay = () => {
@@ -111,7 +115,7 @@ const createScene = async function () {
   // Dynamically position the score display in front of the user
   scene.registerBeforeRender(() => {
     const cameraPosition = xr.baseExperience.camera.position;
-    speedLevelMesh.position = new BABYLON.Vector3(cameraPosition.x, cameraPosition.y + 1.5, cameraPosition.z + 2); // Keep it in front of the user
+    scoreMesh.position = new BABYLON.Vector3(cameraPosition.x, cameraPosition.y + 1.8, cameraPosition.z + 2); // Keep it in front of the user
     updateScoreDisplay();
   });
 
@@ -120,7 +124,7 @@ const createScene = async function () {
     scene.registerBeforeRender(() => {
       if (!isPaused && obstacle.position.z < xr.baseExperience.camera.position.z - 1) {
         // Check if the obstacle has moved past the player
-        score += 1; // Add 1 point for avoiding the obstacle
+        score += 10; // Add 10 points for avoiding the obstacle
         console.log(`Score increased! Current score: ${score}`);
         
         // Move the obstacle further back to reset its position
@@ -178,10 +182,6 @@ const createScene = async function () {
   playButton.onPointerUpObservable.add(() => {
     isPaused = false; // Resume the animation
   });
-
-  /* ENVIRONMENT
-  -------------------------------------------------*/
-  // If there is time, add a skybox option
 
   /* OBSTACLES
   -------------------------------------------------*/
