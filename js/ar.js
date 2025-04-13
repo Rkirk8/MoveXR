@@ -47,9 +47,6 @@ const createScene = async function () {
   speedLevelMesh.position = new BABYLON.Vector3(0, 1.5, 2); // Position it in front of the user
   speedLevelMesh.rotation = new BABYLON.Vector3(0, 0, 0); // Face directly toward the user
 
-  // Attach the speed level mesh to the XR camera to ensure it stays in the user's view
-  xr.baseExperience.camera.parent = speedLevelMesh;
-
   // Create a dynamic texture for the speed level
   const speedTexture = new BABYLON.DynamicTexture("speedTexture", { width: 512, height: 128 }, scene);
   const speedMaterial = new BABYLON.StandardMaterial("speedMaterial", scene);
@@ -78,8 +75,10 @@ const createScene = async function () {
     speedTexture.update();
   };
 
-  // Update the speed level display on each frame
+  // Dynamically position the speed level in front of the user
   scene.registerBeforeRender(() => {
+    const cameraPosition = xr.baseExperience.camera.position;
+    speedLevelMesh.position = new BABYLON.Vector3(cameraPosition.x, cameraPosition.y + 1.5, cameraPosition.z + 2); // Keep it in front of the user
     updateSpeedLevel();
   });
 
