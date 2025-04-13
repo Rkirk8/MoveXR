@@ -63,13 +63,14 @@ const createScene = async function () {
     ctx.fillRect(50, 50, 400, 30);
 
     // Draw speed bar
-    const speedPercentage = Math.min(speed / 0.2, 1);
+    const speedPercentage = Math.min(speed / 0.2, 1); 
     ctx.fillStyle = "green";
     ctx.fillRect(50, 50, 400 * speedPercentage, 30);
 
     // Draw speed text
     ctx.fillStyle = "white";
     ctx.font = "bold 24px Arial";
+    const speedLevel = Math.floor(speed * 100); 
     ctx.fillText(`Level: ${speedLevel}/10`, 200, 40);
 
     speedTexture.update();
@@ -166,23 +167,19 @@ const createScene = async function () {
   -------------------------------------------------*/
   
   const createEndlessZAnimation = (obstacle, index) => {
-    // Create an observer that runs before each frame render
     scene.registerBeforeRender(() => {
       if (!isPaused) { // Only move obstacles if not paused
-        // Move the obstacle toward the player (decrease Z value)
-        obstacle.position.z -= speed; 
-        
+        obstacle.position.z -= speed;
+
         // When obstacle moves past a certain point, reset it to the back
         if (obstacle.position.z < -15) {
-          // Find the furthest obstacle
           let maxZ = -Infinity;
           obstacles.forEach(obs => {
             if (obs.position.z > maxZ) {
               maxZ = obs.position.z;
             }
           });
-          
-          // Place this obstacle behind the furthest one, maintaining the pattern
+
           obstacle.position.z = maxZ + 3; // Add spacing between obstacles
         }
       }
