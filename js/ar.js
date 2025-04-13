@@ -63,15 +63,15 @@ const createScene = async function () {
     ctx.fillRect(50, 50, 400, 30);
 
     // Draw speed bar
-    const speedPercentage = Math.min(speed / 0.2, 1); 
+    const speedPercentage = Math.min(speed / 0.2, 1); // Normalize speed to a percentage
     ctx.fillStyle = "green";
     ctx.fillRect(50, 50, 400 * speedPercentage, 30);
 
     // Draw speed text
     ctx.fillStyle = "white";
     ctx.font = "bold 24px Arial";
-    const speedLevel = Math.floor(speed * 100); 
-    ctx.fillText(`Level: ${speedLevel}`, 50, 200, 40);
+    const speedLevel = Math.floor(speed * 10); // Convert speed to a scale of 1-10
+    ctx.fillText(`Level: ${speedLevel}/10`, 200, 40);
 
     speedTexture.update();
   };
